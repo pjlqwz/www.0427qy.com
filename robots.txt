@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: 
+Sitemap: https://www.0427qy.com/sitemap.xml
