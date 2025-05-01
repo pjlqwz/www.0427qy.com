@@ -1521,13 +1521,6 @@ xmlns:mobile="http://www.baidu.com/schemas/sitemap-mobile/1/">
 <priority>0.8000</priority>  
 </url>  
 <url>  
-<loc>https://www.0427qy.com/news/industry/40f112e92a5c4540e74f9fa1e2e21e24.html</loc>  
-<mobile:mobile type="pc,mobile"/>  
-<lastmod>2025-04-09</lastmod>  
-<changefreq>daily</changefreq>  
-<priority>0.8000</priority>  
-</url>  
-<url>  
 <loc>https://www.0427qy.com/news/industry/698f4de8e7d8d21f01493cdeb75882ff.html</loc>  
 <mobile:mobile type="pc,mobile"/>  
 <lastmod>2025-04-09</lastmod>  
