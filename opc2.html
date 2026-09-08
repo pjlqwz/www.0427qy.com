@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPC 联盟小程序原型 · 微信小程序模拟</title>
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.css" rel="stylesheet">
+<style>
+:root{
+  --bg:oklch(0.972 0.003 250);
+  --surface:oklch(1 0 0);
+  --surface-2:oklch(0.985 0.004 250);
+  --ink:oklch(0.28 0.012 255);
+  --ink-2:oklch(0.47 0.02 255);
+  --ink-3:oklch(0.62 0.018 255);
+  --line:oklch(0.91 0.008 255);
+  --line-2:oklch(0.84 0.014 255);
+  --blue:oklch(0.52 0.14 252);
+  --blue-2:oklch(0.62 0.12 250);
+  --blue-deep:oklch(0.34 0.11 258);
+  --blue-soft:oklch(0.95 0.025 252);
+  --orange:oklch(0.66 0.16 48);
+  --orange-soft:oklch(0.955 0.03 62);
+  --red:oklch(0.55 0.2 27);
+  --teal:oklch(0.52 0.11 175);
+  --teal-soft:oklch(0.945 0.03 175);
+  --green:oklch(0.6 0.13 150);
+  --green-soft:oklch(0.955 0.04 150);
+  --purple:oklch(0.54 0.13 290);
+  --purple-soft:oklch(0.95 0.03 290);
+  --amber:oklch(0.7 0.14 75);
+  --amber-soft:oklch(0.965 0.035 80);
+  --font-sans:"Geist","HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:oklch(0.945 0.005 250);color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:28px 16px 60px;min-height:100vh;-webkit-font-smoothing:antialiased}
+.page-title{text-align:center;margin-bottom:18px}
+.page-title h1{font-size:20px;font-weight:500;letter-spacing:-0.3px}
+.page-title p{font-size:12.5px;color:var(--ink-2);margin-top:5px}
+.page-title .links{margin-top:10px;font-size:12.5px}
+.page-title .links a{color:var(--blue);margin:0 8px;text-decoration:none}
+.page-title .links a:hover{text-decoration:underline}
+
+/* ===== 手机外壳 ===== */
+.phone{width:390px;height:812px;background:#111;border-radius:46px;padding:11px;box-shadow:0 30px 60px oklch(0.25 0.03 260/0.35),0 4px 14px oklch(0.25 0.03 260/0.2);position:relative;flex-shrink:0}
+.screen{width:100%;height:100%;background:var(--bg);border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:118px;height:30px;background:#000;border-radius:16px;z-index:50}
+
+/* 状态栏 */
+.statusbar{height:46px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 26px 4px 26px;font-size:13px;font-weight:500;flex-shrink:0}
+.statusbar .r{display:flex;gap:5px;align-items:center;font-size:11px}
+.sig{display:inline-flex;gap:2px;align-items:flex-end}
+.sig i{display:block;width:3px;background:var(--ink);border-radius:1px}
+.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}.sig i:nth-child(3){height:8px}.sig i:nth-child(4){height:10px}
+.bat{width:21px;height:10px;border:1px solid var(--ink);border-radius:3px;position:relative}
+.bat::after{content:"";position:absolute;inset:1.5px;right:4px;background:var(--ink);border-radius:1px}
+.bat::before{content:"";position:absolute;right:-3px;top:2.5px;width:2px;height:4px;background:var(--ink);border-radius:0 1px 1px 0}
+
+/* 导航栏 */
+.navbar{height:46px;display:flex;align-items:center;justify-content:center;position:relative;background:var(--surface);flex-shrink:0;border-bottom:1px solid var(--line)}
+.navbar .nav-title{font-size:16.5px;font-weight:500}
+.navbar .nav-back{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:19px;color:var(--blue);cursor:pointer;padding:4px}
+.capsule{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;gap:6px;align-items:center}
+.capsule .cap{width:24px;height:24px;border-radius:50%;border:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink-2);background:var(--surface)}
+
+/* 页面区 */
+.pages{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;background:var(--bg);display:none;scrollbar-width:none}
+.page::-webkit-scrollbar{display:none}
+.page.active{display:block;animation:slidein .3s var(--ease)}
+.page.sub.active{animation:pushin .32s var(--ease)}
+@keyframes slidein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pushin{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}
+.pad{padding:14px 16px 24px}
+
+/* 首页头部 */
+.locbar{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;margin-bottom:10px}
+.locbar .pin{color:var(--blue)}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:9px 14px;margin-bottom:12px}
+.search span{font-size:13px;color:var(--ink-3)}
+.govbanner{background:var(--red);color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.govbanner .g-icon{width:34px;height:34px;border-radius:9px;background:oklch(1 0 0/0.18);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.govbanner b{font-size:14px;font-weight:500;display:block}
+.govbanner span{font-size:11px;opacity:.9;display:block;margin-top:2px}
+.govbanner .g-arrow{margin-left:auto;font-size:12px;opacity:.8}
+
+/* 九宫格 */
+.grid{background:var(--surface);border-radius:16px;padding:18px 8px 14px;margin-bottom:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px 8px}
+.grid .g{text-align:center;cursor:pointer}
+.grid .g .g-icon{width:46px;height:46px;border-radius:14px;margin:0 auto 7px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#fff}
+.grid .g .g-name{font-size:12px;color:var(--ink-2)}
+.grid .g:active{opacity:.7}
+
+/* 卡片 */
+.card{background:var(--surface);border-radius:16px;padding:15px 16px;margin-bottom:12px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-head b{font-size:15px;font-weight:500}
+.card-head .more{font-size:12px;color:var(--blue)}
+.policy-cta{background:var(--green-soft);border:1px solid oklch(0.85 0.06 150);border-radius:16px;padding:15px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.policy-cta .p-icon{width:40px;height:40px;border-radius:12px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.policy-cta b{font-size:14.5px;font-weight:500;display:block}
+.policy-cta span{font-size:11.5px;color:var(--ink-2);display:block;margin-top:2px}
+.policy-cta .p-arrow{margin-left:auto;color:var(--green);font-size:12px}
+
+/* 需求行 */
+.demand{background:var(--surface);border-radius:14px;padding:14px 15px;margin-bottom:10px;cursor:pointer}
+.demand:active{opacity:.75}
+.demand .d-top{display:flex;align-items:center;gap:7px;margin-bottom:6px;flex-wrap:wrap}
+.demand .d-title{font-size:14.5px;font-weight:500;flex:1;min-width:120px}
+.demand .d-desc{font-size:12px;color:var(--ink-2);margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.demand .d-foot{display:flex;align-items:center;justify-content:space-between}
+.demand .reward{font-family:"Geist",sans-serif;font-size:16px;font-weight:500;color:var(--orange)}
+.demand .meta{font-size:11px;color:var(--ink-3)}
+.chip{display:inline-block;font-size:11px;padding:2.5px 9px;border-radius:99px;font-weight:500}
+.chip-blue{background:var(--blue-soft);color:var(--blue-deep)}
+.chip-orange{background:var(--orange-soft);color:oklch(0.5 0.15 48)}
+.chip-green{background:var(--green-soft);color:oklch(0.45 0.13 150)}
+.chip-red{background:oklch(0.95 0.03 27);color:var(--red)}
+.chip-gray{background:var(--surface-2);color:var(--ink-2)}
+
+/* 服务列表 */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips .c{white-space:nowrap;padding:7px 15px;border-radius:99px;font-size:12.5px;background:var(--surface);border:1px solid var(--line-2);color:var(--ink-2);cursor:pointer}
+.chips .c.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:500}
+.svc{display:flex;gap:12px;background:var(--surface);border-radius:14px;padding:13px 14px;margin-bottom:10px;cursor:pointer}
+.svc:active{opacity:.75}
+.svc .ava{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;flex-shrink:0}
+.svc .info{flex:1;min-width:0}
+.svc .s-name{font-size:14px;font-weight:500;display:flex;align-items:center;gap:6px}
+.svc .s-desc{font-size:11.5px;color:var(--ink-2);margin:3px 0 6px}
+.svc .s-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-3)}
+.svc .price{margin-left:auto;text-align:right;flex-shrink:0}
+.svc .price b{font-family:"Geist",sans-serif;font-size:16px;font-weight:500;color:var(--orange);display:block}
+.svc .price small{font-size:10.5px;color:var(--ink-3)}
+
+/* 我的 */
+.me-card{background:linear-gradient(135deg,var(--blue),var(--blue-deep));border-radius:16px;padding:18px 16px;color:#fff;margin-bottom:12px;display:flex;gap:13px;align-items:center}
+.me-card .me-ava{width:52px;height:52px;border-radius:50%;background:oklch(1 0 0/0.2);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.me-card .me-name{font-size:16px;font-weight:500}
+.me-card .me-tag{font-size:11px;background:oklch(1 0 0/0.18);padding:2px 9px;border-radius:99px;display:inline-block;margin-top:5px}
+.me-card .credit{margin-left:auto;text-align:center}
+.me-card .credit b{font-family:"Geist",sans-serif;font-size:22px;font-weight:500;display:block}
+.me-card .credit span{font-size:10.5px;opacity:.85}
+.todo-tip{background:var(--amber-soft);border-radius:14px;padding:12px 14px;margin-bottom:12px;display:flex;gap:9px;align-items:center;font-size:12.5px;color:oklch(0.45 0.1 60)}
+.todo-tip b{font-weight:500}
+.menu{background:var(--surface);border-radius:16px;overflow:hidden}
+.menu .m{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer}
+.menu .m:last-child{border-bottom:none}
+.menu .m:active{background:var(--surface-2)}
+.menu .m .m-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;flex-shrink:0}
+.menu .m .m-name{font-size:14px;flex:1}
+.menu .m .m-badge{font-size:11px;background:var(--red);color:#fff;border-radius:99px;padding:1.5px 7px}
+.menu .m .m-arrow{color:var(--ink-3);font-size:13px}
+
+/* TabBar */
+.tabbar{height:58px;background:var(--surface);border-top:1px solid var(--line);display:flex;flex-shrink:0;padding-bottom:6px}
+.tabbar .t{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.5px;cursor:pointer;color:var(--ink-3);font-size:10.5px}
+.tabbar .t .t-icon{font-size:20px;line-height:1}
+.tabbar .t.on{color:var(--blue);font-weight:500}
+
+/* 发布按钮 */
+.fab{position:absolute;right:18px;bottom:82px;width:52px;height:52px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 20px oklch(0.5 0.15 48/0.4);z-index:20;cursor:pointer}
+.fab:active{transform:scale(.94)}
+
+/* 二级页 */
+.subpage-nav{position:sticky;top:0;background:var(--surface);z-index:10}
+.detail-hero{background:var(--surface);border-radius:14px;padding:15px 16px;margin-bottom:12px}
+.detail-hero h3{font-size:16.5px;font-weight:500;margin:8px 0}
+.detail-hero p{font-size:12.5px;color:var(--ink-2);line-height:1.75}
+.guard{background:var(--green-soft);border:1px solid oklch(0.85 0.06 150);border-radius:14px;padding:13px 15px;margin-bottom:12px}
+.guard b{font-size:13px;font-weight:500;color:oklch(0.4 0.1 150)}
+.guard p{font-size:11.5px;color:oklch(0.45 0.1 150);margin-top:4px;line-height:1.6}
+.bottom-bar{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px;display:flex;gap:10px}
+.btn{flex:1;text-align:center;padding:12px;border-radius:12px;font-size:14.5px;font-weight:500;cursor:pointer}
+.btn:active{opacity:.85}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-ghost{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line-2)}
+.form-item{margin-bottom:13px}
+.form-item label{display:block;font-size:12.5px;font-weight:500;color:var(--ink-2);margin-bottom:6px}
+.form-item input,.form-item select,.form-item textarea{width:100%;padding:11px 13px;border:1px solid var(--line-2);border-radius:11px;font-size:13.5px;font-family:inherit;background:var(--surface);color:var(--ink)}
+.form-item input:focus,.form-item select:focus,.form-item textarea:focus{outline:2px solid var(--blue);outline-offset:-1px}
+.form-item .hint{font-size:11px;color:var(--ink-3);margin-top:4px}
+.opt-row{display:flex;flex-wrap:wrap;gap:8px}
+.opt-row .o{padding:8px 15px;border-radius:99px;font-size:12.5px;border:1px solid var(--line-2);color:var(--ink-2);cursor:pointer;background:var(--surface)}
+.opt-row .o.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.policy-item{background:var(--surface);border-radius:14px;padding:14px 15px;margin-bottom:10px}
+.policy-item .p-amt{font-family:"Geist",sans-serif;font-size:20px;font-weight:500;color:var(--green)}
+.policy-item .p-amt small{font-size:10.5px;color:var(--ink-3);font-weight:400;display:block}
+.policy-item .p-t{font-size:14px;font-weight:500;margin:4px 0}
+.policy-item .p-d{font-size:12px;color:var(--ink-2);line-height:1.65}
+
+/* Toast */
+.toast{position:absolute;left:50%;bottom:120px;transform:translateX(-50%) translateY(10px);background:oklch(0.25 0.02 255/0.9);color:#fff;font-size:12.5px;padding:9px 18px;border-radius:10px;opacity:0;pointer-events:none;transition:all .25s var(--ease);z-index:60;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:480px){
+  body{padding:0;background:oklch(0.945 0.005 250)}
+  .page-title{display:none}
+  .phone{width:100vw;height:100vh;border-radius:0;padding:0;box-shadow:none}
+  .screen{border-radius:0}
+}
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  <h1>OPC 联盟小程序 · 微信小程序模拟</h1>
+  <p>移动端版本原型 · 与 PC 版同一套品牌体系 · 底部 Tab 切换，点击列表进入二级页</p>
+  <div class="links">
+    <a href="OPC联盟平台原型.html" target="_blank">打开 PC 版原型 ↗</a>
+    <a href="javascript:void(0)" onclick="showToast('小程序端聚焦高频动作：查补贴、找服务、发需求、看订单')">演示提示</a>
+  </div>
+</div>
+
+<div class="phone">
+  <div class="screen">
+    <div class="island"></div>
+
+    <!-- 状态栏 -->
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="r"><span class="sig"><i></i><i></i><i></i><i></i></span><span class="bat"></span></span>
+    </div>
+
+    <!-- 导航栏 -->
+    <div class="navbar">
+      <span class="nav-back" id="navBack" style="display:none" onclick="subBack()">‹</span>
+      <span class="nav-title" id="navTitle">OPC 创业联盟</span>
+      <span class="capsule"><span class="cap">⋯</span><span class="cap">◉</span></span>
+    </div>
+
+    <!-- 页面区 -->
+    <div class="pages">
+
+      <!-- ===== Tab1 首页 ===== -->
+      <div class="page active" id="p-home">
+        <div class="pad">
+          <div class="locbar"><span class="pin">📍</span>盘锦市 <span style="font-size:11px;color:var(--ink-3);font-weight:400">· OPC 创业联盟</span></div>
+          <div class="search"><span>🔍</span><span>搜索服务、需求、政策…</span></div>
+          <div class="govbanner" onclick="showToast('人社局 OPC 创业联盟指定服务平台')">
+            <span class="g-icon">★</span>
+            <div><b>盘锦市人社局 · OPC 创业联盟</b><span>指定服务平台 · 一人公司创业全支持</span></div>
+            <span class="g-arrow">›</span>
+          </div>
+          <div class="grid">
+            <div class="g" onclick="showToast('原型演示：跳转开办服务流程')"><div class="g-icon" style="background:var(--blue)">📋</div><div class="g-name">工商注册</div></div>
+            <div class="g" onclick="switchTab(1)"><div class="g-icon" style="background:var(--teal)">🧾</div><div class="g-name">代理记账</div></div>
+            <div class="g" onclick="openSub('policy')"><div class="g-icon" style="background:var(--green)">🎯</div><div class="g-name">政策补贴</div></div>
+            <div class="g" onclick="switchTab(1)"><div class="g-icon" style="background:var(--purple)">⚖️</div><div class="g-name">法律顾问</div></div>
+            <div class="g" onclick="switchTab(1)"><div class="g-icon" style="background:var(--orange)">👥</div><div class="g-name">社保代缴</div></div>
+            <div class="g" onclick="switchTab(1)"><div class="g-icon" style="background:oklch(0.55 0.1 300)">🏷️</div><div class="g-name">商标知产</div></div>
+            <div class="g" onclick="showToast('AI 助手：问答、导办、写文案，7×24 在线')"><div class="g-icon" style="background:oklch(0.5 0.12 210)">🤖</div><div class="g-name">AI 助手</div></div>
+            <div class="g" onclick="switchTab(2)"><div class="g-icon" style="background:oklch(0.55 0.13 20)">💼</div><div class="g-name">需求大厅</div></div>
+          </div>
+          <div class="policy-cta" onclick="openSub('policy')">
+            <span class="p-icon">🎯</span>
+            <div><b>测一测：你能领哪些补贴？</b><span>3 个问题，匹配全部可申领政策，自动提醒申报</span></div>
+            <span class="p-arrow">›</span>
+          </div>
+          <div class="card">
+            <div class="card-head"><b>🔥 热门需求</b><span class="more" onclick="switchTab(2)">全部 ›</span></div>
+            <div class="demand" onclick="openSub('detail')">
+              <div class="d-top"><span class="chip chip-blue">网站开发</span><span class="d-title">餐饮连锁官网改版</span></div>
+              <div class="d-desc">响应式设计 + 在线订座接口，工期 15 天，本地服务商优先</div>
+              <div class="d-foot"><span class="reward">¥8,000</span><span class="meta">6 人报名 · 托管中</span></div>
+            </div>
+            <div class="demand" onclick="openSub('detail')">
+              <div class="d-top"><span class="chip chip-orange">视频制作</span><span class="d-title">农机产品口播视频 ×3</span></div>
+              <div class="d-desc">60 秒竖版带字幕，含文案大纲，验收后付全款</div>
+              <div class="d-foot"><span class="reward">¥3,600</span><span class="meta">9 人报名 · 托管中</span></div>
+            </div>
+            <div class="demand" onclick="openSub('detail')">
+              <div class="d-top"><span class="chip chip-green">营销推广</span><span class="d-title">教育机构抖音代运营</span></div>
+              <div class="d-desc">每月 12 条短视频 + 账号运营，按线索量结算</div>
+              <div class="d-foot"><span class="reward">¥6,000/月</span><span class="meta">4 人报名 · 托管中</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><b>📌 最新政策</b><span class="more" onclick="openSub('policy')">速配 ›</span></div>
+            <div style="padding:10px 0;border-bottom:1px solid var(--line)">
+              <div style="font-size:13.5px;font-weight:500">一次性创业补贴 ¥3,000</div>
+              <div style="font-size:11.5px;color:var(--ink-2);margin-top:2px">毕业 5 年内可申领 · 平台已自动预填材料</div>
+              <div style="margin-top:6px"><span class="chip chip-red">申报中 · 至 10/31</span></div>
+            </div>
+            <div style="padding:10px 0">
+              <div style="font-size:13.5px;font-weight:500">OPC 场地补贴新政</div>
+              <div style="font-size:11.5px;color:var(--ink-2);margin-top:2px">虚拟地址/工位入驻，最长补 24 个月</div>
+              <div style="margin-top:6px"><span class="chip chip-green">新政策</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Tab2 服务 ===== -->
+      <div class="page" id="p-svc">
+        <div class="pad">
+          <div class="search" style="margin-top:2px"><span>🔍</span><span>搜索服务商、服务项目…</span></div>
+          <div class="chips">
+            <span class="c on">全部</span>
+            <span class="c">代理记账</span>
+            <span class="c">税务筹划</span>
+            <span class="c">法律顾问</span>
+            <span class="c">人力资源</span>
+            <span class="c">商标知产</span>
+          </div>
+          <div class="svc" onclick="showToast('原型演示：查看服务详情与下单')">
+            <div class="ava" style="background:var(--teal)">财</div>
+            <div class="info">
+              <div class="s-name">顺达财务 · 一人公司代账套餐<span class="chip chip-green" style="margin-left:auto">认证</span></div>
+              <div class="s-desc">月度申报 + 年度汇算 + 补贴减免测算，专属会计 1v1</div>
+              <div class="s-meta"><span>★★★★★ 4.9</span><span>已售 320+</span></div>
+            </div>
+            <div class="price"><b>¥99</b><small>/月起</small></div>
+          </div>
+          <div class="svc" onclick="showToast('原型演示：查看服务详情与下单')">
+            <div class="ava" style="background:var(--purple)">法</div>
+            <div class="info">
+              <div class="s-name">恒信律所 · 常年法律顾问<span class="chip chip-green" style="margin-left:auto">认证</span></div>
+              <div class="s-desc">合同模板库、审查、催收、劳动纠纷，全年不限次</div>
+              <div class="s-meta"><span>★★★★★ 4.9</span><span>已售 210+</span></div>
+            </div>
+            <div class="price"><b>¥2,000</b><small>/年起</small></div>
+          </div>
+          <div class="svc" onclick="showToast('原型演示：查看服务详情与下单')">
+            <div class="ava" style="background:var(--green)">人</div>
+            <div class="info">
+              <div class="s-name">人和人力 · 社保公积金代缴<span class="chip chip-green" style="margin-left:auto">认证</span></div>
+              <div class="s-desc">双参保测算、月度代缴、基数申报提醒</div>
+              <div class="s-meta"><span>★★★★☆ 4.8</span><span>已售 530+</span></div>
+            </div>
+            <div class="price"><b>¥50</b><small>/月/人</small></div>
+          </div>
+          <div class="svc" onclick="showToast('原型演示：查看服务详情与下单')">
+            <div class="ava" style="background:oklch(0.55 0.1 300)">标</div>
+            <div class="info">
+              <div class="s-name">知产通 · 商标注册含查询<span class="chip chip-green" style="margin-left:auto">认证</span></div>
+              <div class="s-desc">检索分析 + 申请 + 驳回应对，失败按协议退款</div>
+              <div class="s-meta"><span>★★★★★ 5.0</span><span>已售 148+</span></div>
+            </div>
+            <div class="price"><b>¥680</b><small>/件</small></div>
+          </div>
+          <div class="guard" style="margin-top:4px">
+            <b>🛡 全部服务商均经联盟认证</b>
+            <p>价格公示、服务保障金、不满意可申诉，政府背书兜底。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Tab3 需求 ===== -->
+      <div class="page" id="p-market">
+        <div class="pad">
+          <div class="chips" style="margin-top:2px">
+            <span class="c on">全部</span>
+            <span class="c">网站开发</span>
+            <span class="c">设计美工</span>
+            <span class="c">文案写作</span>
+            <span class="c">视频制作</span>
+            <span class="c">营销推广</span>
+          </div>
+          <div class="demand" onclick="openSub('detail')">
+            <div class="d-top"><span class="chip chip-blue">网站开发</span><span class="d-title">餐饮连锁官网改版</span><span class="chip chip-green" style="margin-left:auto">托管中</span></div>
+            <div class="d-desc">响应式设计 + 在线订座 + 团购核销接口，工期 15 天</div>
+            <div class="d-foot"><span class="reward">¥8,000</span><span class="meta">6 人报名 · 2h 前</span></div>
+          </div>
+          <div class="demand" onclick="openSub('detail')">
+            <div class="d-top"><span class="chip chip-orange">视频制作</span><span class="d-title">农机产品口播视频 ×3</span><span class="chip chip-green" style="margin-left:auto">托管中</span></div>
+            <div class="d-desc">60 秒竖版带字幕 BGM，风格务实，提供文案大纲</div>
+            <div class="d-foot"><span class="reward">¥3,600</span><span class="meta">9 人报名 · 5h 前</span></div>
+          </div>
+          <div class="demand" onclick="openSub('detail')">
+            <div class="d-top"><span class="chip chip-green">营销推广</span><span class="d-title">教育机构抖音代运营</span><span class="chip chip-green" style="margin-left:auto">托管中</span></div>
+            <div class="d-desc">每月 12 条短视频 + 账号运营，按线索量结算</div>
+            <div class="d-foot"><span class="reward">¥6,000/月</span><span class="meta">4 人报名 · 1 天前</span></div>
+          </div>
+          <div class="demand" onclick="openSub('detail')">
+            <div class="d-top"><span class="chip chip-purple" style="background:var(--purple-soft);color:var(--purple)">文案写作</span><span class="d-title">农产品品牌招商手册</span><span class="chip chip-green" style="margin-left:auto">托管中</span></div>
+            <div class="d-desc">大米/河蟹特色品牌，定位 + 招商话术 + 渠道政策</div>
+            <div class="d-foot"><span class="reward">¥5,000</span><span class="meta">5 人报名 · 2 天前</span></div>
+          </div>
+          <div class="guard">
+            <b>🛡 赏金托管 · 交易保障</b>
+            <p>赏金由平台监管，验收通过才放款；纠纷由联盟仲裁小组处理。</p>
+          </div>
+        </div>
+        <div class="fab" onclick="openSub('publish')">＋</div>
+      </div>
+
+      <!-- ===== Tab4 我的 ===== -->
+      <div class="page" id="p-me">
+        <div class="pad">
+          <div class="me-card">
+            <div class="me-ava">👤</div>
+            <div>
+              <div class="me-name">张三 · OPC 创业者</div>
+              <span class="me-tag">🏆 联盟认证会员</span>
+            </div>
+            <div class="credit"><b>4.8</b><span>信用分</span></div>
+          </div>
+          <div class="todo-tip">
+            <span>📋</span>
+            <div><b>4 项待办：</b>补贴申报材料待提交 · 1 份竞标待选择 · VI 初稿待交付 · 代账对账单待确认</div>
+          </div>
+          <div class="menu">
+            <div class="m" onclick="showToast('原型演示：我的订单列表')"><span class="m-icon" style="background:var(--blue)">📦</span><span class="m-name">我的订单</span><span class="m-badge">3</span><span class="m-arrow">›</span></div>
+            <div class="m" onclick="showToast('原型演示：我的接单列表')"><span class="m-icon" style="background:var(--teal)">⚡</span><span class="m-name">我的接单</span><span class="m-badge">2</span><span class="m-arrow">›</span></div>
+            <div class="m" onclick="openSub('policy')"><span class="m-icon" style="background:var(--green)">🎯</span><span class="m-name">我的政策</span><span class="m-badge">3</span><span class="m-arrow">›</span></div>
+            <div class="m" onclick="showToast('原型演示：我的订阅服务')"><span class="m-icon" style="background:var(--purple)">🛠</span><span class="m-name">我的服务</span><span class="m-arrow">›</span></div>
+            <div class="m" onclick="showToast('联盟公告与帮助中心')"><span class="m-icon" style="background:var(--orange)">ℹ️</span><span class="m-name">联盟服务与帮助</span><span class="m-arrow">›</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 二级页：需求详情 ===== -->
+      <div class="page sub" id="p-detail">
+        <div class="pad" style="padding-bottom:90px">
+          <div class="detail-hero">
+            <div style="display:flex;gap:7px;flex-wrap:wrap"><span class="chip chip-blue">网站开发</span><span class="chip chip-gray">发布于 2h 前</span></div>
+            <h3>盘锦某餐饮连锁品牌官网改版</h3>
+            <p>现有官网为 2019 年建设，无法适配移动端。本次改版目标：<br>① 响应式设计；② 在线订座 + 团购券核销接口；③ 12 家分店展示；④ 后台自主维护菜品活动。<br><br>预算 8,000 元，工期 15 天，接受分期验收，优先本地服务商。</p>
+            <div style="font-size:11.5px;color:var(--ink-3);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)">👤 需求方：盘锦××餐饮管理（联盟会员） · 信用 4.9 · 历史托管 ¥186,000</div>
+          </div>
+          <div class="guard">
+            <b>🛡 赏金已托管 · 平台保障交易</b>
+            <p>未验收不划款 · 纠纷 7 天内仲裁出结果 · 中标后平台收取 5% 服务费（会员 3%）</p>
+          </div>
+          <div class="card">
+            <div class="card-head"><b>竞标方案（4 份）</b></div>
+            <div class="svc" style="margin-bottom:0;padding:12px 0;border-bottom:1px solid var(--line);border-radius:0">
+              <div class="ava" style="background:var(--blue)">码</div>
+              <div class="info">
+                <div class="s-name">盘锦云码科技<span class="chip chip-blue" style="margin-left:auto">认证</span></div>
+                <div class="s-desc">15 天交付 · 响应式 + 收银系统 API 对接 · 3 个月免费维护</div>
+                <div class="s-meta"><span>98% 好评</span><span>已成交 42 单</span></div>
+              </div>
+              <div class="price"><b style="color:var(--blue)">¥7,600</b></div>
+            </div>
+            <div class="svc" style="margin-bottom:0;padding:12px 0;border-bottom:1px solid var(--line);border-radius:0">
+              <div class="ava" style="background:var(--teal)">创</div>
+              <div class="info">
+                <div class="s-name">创界网络工作室</div>
+                <div class="s-desc">4 阶段分期验收 · 报价含订座小程序端 · 可先出 Demo</div>
+                <div class="s-meta"><span>96% 好评</span><span>已成交 28 单</span></div>
+              </div>
+              <div class="price"><b style="color:var(--blue)">¥8,000</b></div>
+            </div>
+            <div class="svc" style="margin-bottom:0;padding:12px 0;border-radius:0">
+              <div class="ava" style="background:var(--purple)">自</div>
+              <div class="info">
+                <div class="s-name">自由职业 王工（UI/前端）</div>
+                <div class="s-desc">餐饮模板重构 · 工期 10 天 · 维护 ¥800/年</div>
+                <div class="s-meta"><span>99% 好评</span><span>已成交 67 单</span></div>
+              </div>
+              <div class="price"><b style="color:var(--blue)">¥6,500</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-bar">
+          <button class="btn btn-ghost" onclick="showToast('原型演示：收藏需求')">收藏</button>
+          <button class="btn btn-orange" onclick="showToast('原型演示：竞标表单已打开')">我要竞标</button>
+        </div>
+      </div>
+
+      <!-- ===== 二级页：政策速配 ===== -->
+      <div class="page sub" id="p-policy">
+        <div class="pad" style="padding-bottom:30px">
+          <div class="card">
+            <div class="card-head"><b>告诉我你的情况</b></div>
+            <div class="form-item">
+              <label>你现在处于哪个阶段？</label>
+              <div class="opt-row"><span class="o on">还没注册</span><span class="o">已注册 1 年内</span><span class="o">已注册 1 年以上</span></div>
+            </div>
+            <div class="form-item">
+              <label>你的身份属于？（可多选）</label>
+              <div class="opt-row"><span class="o on">毕业 5 年内</span><span class="o">登记失业</span><span class="o">退役军人</span><span class="o">普通创业</span></div>
+            </div>
+            <div class="form-item">
+              <label>主营业务方向</label>
+              <div class="opt-row"><span class="o on">AI/软件</span><span class="o">电商直播</span><span class="o">设计创意</span><span class="o">本地生活</span></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="runPolicy()">立即为我匹配</button>
+          </div>
+          <div id="policyResult" style="display:none">
+            <div class="policy-item">
+              <div class="p-amt">¥3,000<small>一次性</small></div>
+              <div class="p-t">一次性创业补贴 <span class="chip chip-red">申报中 · 至 10/31</span></div>
+              <div class="p-d">毕业 5 年内首次创办企业、正常经营 3 个月即可申领，平台已预填材料。</div>
+            </div>
+            <div class="policy-item">
+              <div class="p-amt">1.2 万/年<small>最长 24 个月</small></div>
+              <div class="p-t">OPC 创业场地补贴 <span class="chip chip-green">新政策</span></div>
+              <div class="p-d">入驻联盟虚拟地址/工位自动抵扣，无需额外申请。</div>
+            </div>
+            <div class="policy-item">
+              <div class="p-amt">¥30 万<small>贴息 50%</small></div>
+              <div class="p-t">创业担保贷款贴息 <span class="chip chip-blue">联盟通道</span></div>
+              <div class="p-d">一人公司免担保人，信用评估通过即放款，合作银行 3 家。</div>
+            </div>
+            <div class="guard">
+              <b>💡 政策找人</b>
+              <p>新政策发布后系统自动匹配并推送申报任务，不用自己盯文件。金额以人社局正式发文为准。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 二级页：发布需求 ===== -->
+      <div class="page sub" id="p-publish">
+        <div class="pad" style="padding-bottom:30px">
+          <div class="form-item">
+            <label>需求标题</label>
+            <input type="text" placeholder="一句话说清你要什么">
+          </div>
+          <div class="form-item">
+            <label>需求描述</label>
+            <textarea rows="4" placeholder="背景、要求、工期、预算说明…"></textarea>
+          </div>
+          <div style="display:flex;gap:10px">
+            <div class="form-item" style="flex:1">
+              <label>赏金（元）</label>
+              <input type="number" placeholder="托管到平台">
+            </div>
+            <div class="form-item" style="flex:1">
+              <label>类目</label>
+              <select><option>网站开发</option><option>设计美工</option><option>文案写作</option><option>视频制作</option><option>营销推广</option></select>
+            </div>
+          </div>
+          <div class="guard">
+            <b>💡 赏金托管保障</b>
+            <p>赏金由平台托管，验收通过才放款——发布方不怕被坑，接单方不怕跑单。</p>
+          </div>
+          <button class="btn btn-orange" style="width:100%" onclick="showToast('原型演示：需求已发布，进入审核')">确认发布</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TabBar -->
+    <div class="tabbar" id="tabbar">
+      <div class="t on" data-t="0" onclick="switchTab(0)"><span class="t-icon">🏠</span>首页</div>
+      <div class="t" data-t="1" onclick="switchTab(1)"><span class="t-icon">🛠</span>服务</div>
+      <div class="t" data-t="2" onclick="switchTab(2)"><span class="t-icon">💼</span>需求</div>
+      <div class="t" data-t="3" onclick="switchTab(3)"><span class="t-icon">👤</span>我的</div>
+    </div>
+
+    <div class="toast" id="toast">提示</div>
+  </div>
+</div>
+
+<script>
+var tabs=['p-home','p-svc','p-market','p-me'];
+var tabNames=['OPC 创业联盟','服务大厅','需求大厅','我的'];
+var subStack=[];
+function switchTab(i){
+  if(subStack.length)return;
+  tabs.forEach(function(id,idx){
+    document.getElementById(id).classList.toggle('active',idx===i);
+  });
+  document.querySelectorAll('.tabbar .t').forEach(function(t,idx){
+    t.classList.toggle('on',idx===i);
+  });
+  document.getElementById('navTitle').textContent=tabNames[i];
+  document.getElementById('navBack').style.display='none';
+}
+function openSub(key){
+  document.getElementById('p-'+key).classList.add('active');
+  document.getElementById('tabbar').style.display='none';
+  document.getElementById('navBack').style.display='block';
+  var titles={detail:'需求详情',policy:'政策速配',publish:'发布需求'};
+  document.getElementById('navTitle').textContent=titles[key];
+  subStack.push(key);
+  document.querySelectorAll('.page.sub').forEach(function(p){
+    if(p.id!=='p-'+key)p.classList.remove('active');
+  });
+}
+function subBack(){
+  var k=subStack.pop();
+  document.getElementById('p-'+k).classList.remove('active');
+  if(subStack.length){
+    var top=subStack[subStack.length-1];
+    document.getElementById('p-'+top).classList.add('active');
+  }else{
+    document.getElementById('tabbar').style.display='flex';
+    document.getElementById('navBack').style.display='none';
+    var cur=tabs.findIndex(function(id){return document.getElementById(id).classList.contains('active');});
+    document.getElementById('navTitle').textContent=tabNames[cur];
+  }
+}
+document.querySelectorAll('.opt-row .o').forEach(function(o){
+  o.addEventListener('click',function(){o.classList.toggle('on');});
+});
+document.querySelectorAll('.chips .c').forEach(function(c){
+  c.addEventListener('click',function(){
+    c.parentNode.querySelectorAll('.c').forEach(function(x){x.classList.remove('on');});
+    c.classList.add('on');
+  });
+});
+function runPolicy(){
+  document.getElementById('policyResult').style.display='block';
+  document.getElementById('policyResult').scrollIntoView({behavior:'smooth',block:'start'});
+  showToast('为你匹配到 3 项可申领政策');
+}
+var toastTimer=null;
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('show');},2000);
+}
+</script>
+</body>
+</html>

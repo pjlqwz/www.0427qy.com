@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPC 创业联盟 · 一人公司一体化服务平台 — 高保真原型</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts/geist-sans/style.css" rel="stylesheet">
+<style>
+:root{
+  --bg:oklch(0.972 0.003 250);
+  --surface:oklch(1 0 0);
+  --surface-2:oklch(0.985 0.004 250);
+  --ink:oklch(0.28 0.012 255);
+  --ink-2:oklch(0.47 0.02 255);
+  --ink-3:oklch(0.62 0.018 255);
+  --line:oklch(0.91 0.008 255);
+  --line-2:oklch(0.84 0.014 255);
+  --blue:oklch(0.52 0.14 252);
+  --blue-2:oklch(0.62 0.12 250);
+  --blue-deep:oklch(0.34 0.11 258);
+  --blue-soft:oklch(0.95 0.025 252);
+  --orange:oklch(0.66 0.16 48);
+  --orange-soft:oklch(0.955 0.03 62);
+  --red:oklch(0.55 0.2 27);
+  --teal:oklch(0.52 0.11 175);
+  --teal-soft:oklch(0.945 0.03 175);
+  --green:oklch(0.6 0.13 150);
+  --green-soft:oklch(0.955 0.04 150);
+  --purple:oklch(0.54 0.13 290);
+  --purple-soft:oklch(0.95 0.03 290);
+  --amber:oklch(0.7 0.14 75);
+  --amber-soft:oklch(0.965 0.035 80);
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 1px 2px oklch(0.3 0.02 255/0.05),0 10px 30px oklch(0.3 0.02 255/0.06);
+  --ease:cubic-bezier(0.16,1,0.3,1);
+  --font-sans:"Geist","HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::selection{background:var(--blue-soft)}
+
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ===== 政府背书条 ===== */
+.govbar{background:var(--red);color:#fff;font-size:13px}
+.govbar .wrap{display:flex;align-items:center;justify-content:center;gap:10px;padding:7px 24px}
+.govbar .star{font-size:11px;letter-spacing:1px;opacity:.9}
+.govbar b{font-weight:500}
+
+/* ===== 顶部导航 ===== */
+.nav{position:sticky;top:0;z-index:100;background:oklch(1 0 0/0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;height:64px;gap:32px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:500;font-size:17px}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+.brand small{display:block;font-size:11px;color:var(--ink-3);font-weight:400}
+.menu{display:flex;gap:4px;flex:1}
+.menu button{padding:9px 14px;border-radius:9px;font-size:14px;color:var(--ink-2);transition:all .15s var(--ease)}
+.menu button:hover{background:var(--surface-2);color:var(--ink)}
+.menu button.active{background:var(--blue-soft);color:var(--blue-deep);font-weight:500}
+.nav-cta{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:11px;font-size:14px;font-weight:500;transition:all .18s var(--ease)}
+.btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover{background:var(--blue-deep);transform:translateY(-1px)}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover{background:oklch(0.58 0.17 48);transform:translateY(-1px)}
+.btn-ghost{border:1px solid var(--line-2);color:var(--ink-2);background:var(--surface)}
+.btn-ghost:hover{border-color:var(--blue);color:var(--blue-deep)}
+
+/* ===== 视图容器 ===== */
+.view{display:none;padding:40px 0 80px;animation:fade .35s var(--ease)}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ===== 通用区块 ===== */
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;gap:16px}
+.sec-head h2{font-size:26px;font-weight:500;letter-spacing:-0.5px}
+.sec-head p{color:var(--ink-2);margin-top:6px;font-size:14px}
+.sec-head .more{font-size:13px;color:var(--blue);font-weight:500;white-space:nowrap}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 10px;border-radius:99px;font-weight:500}
+.tag-blue{background:var(--blue-soft);color:var(--blue-deep)}
+.tag-orange{background:var(--orange-soft);color:oklch(0.5 0.15 48)}
+.tag-green{background:var(--green-soft);color:oklch(0.45 0.13 150)}
+.tag-gray{background:var(--surface-2);color:var(--ink-2);border:1px solid var(--line)}
+.tag-red{background:oklch(0.95 0.03 27);color:var(--red)}
+.tag-purple{background:var(--purple-soft);color:var(--purple)}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+
+/* ===== 首页 Hero ===== */
+.hero{background:linear-gradient(180deg,var(--blue-soft) 0%,var(--bg) 100%);border-radius:24px;padding:64px 56px;position:relative;overflow:hidden;margin-bottom:56px}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:oklch(0.5 0.13 252/0.08)}
+.hero::before{content:"";position:absolute;right:60px;bottom:-160px;width:300px;height:300px;border-radius:50%;background:oklch(0.66 0.16 48/0.06)}
+.hero .inner{position:relative;z-index:1;max-width:640px}
+.hero .pill{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);padding:7px 16px;border-radius:99px;font-size:13px;color:var(--ink-2);box-shadow:var(--shadow)}
+.hero .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.hero h1{font-size:44px;line-height:1.22;font-weight:500;letter-spacing:-1px;margin:22px 0 18px}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero .sub{font-size:16px;color:var(--ink-2);max-width:520px}
+.hero .cta-row{display:flex;gap:14px;margin-top:34px}
+.hero .btn{padding:14px 28px;font-size:15px}
+.hero .trust{display:flex;gap:26px;margin-top:38px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap}
+.hero .trust span{font-size:13px;color:var(--ink-2);display:flex;align-items:center;gap:7px}
+.hero .trust i{font-style:normal;color:var(--green);font-weight:500}
+
+/* ===== 双轮入口 ===== */
+.wheels{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:64px}
+.wheel{border-radius:var(--radius);padding:34px;position:relative;overflow:hidden;transition:transform .2s var(--ease);cursor:pointer}
+.wheel:hover{transform:translateY(-3px)}
+.wheel-a{background:var(--teal-soft);border:1px solid oklch(0.85 0.06 175)}
+.wheel-b{background:var(--purple-soft);border:1px solid oklch(0.85 0.06 290)}
+.wheel .w-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:18px;color:#fff}
+.wheel-a .w-icon{background:var(--teal)}
+.wheel-b .w-icon{background:var(--purple)}
+.wheel h3{font-size:22px;font-weight:500;margin-bottom:8px}
+.wheel .w-sub{font-size:14px;color:var(--ink-2);margin-bottom:20px}
+.wheel .w-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.wheel .w-list span{font-size:12.5px;background:var(--surface);border:1px solid var(--line);padding:5px 12px;border-radius:8px;color:var(--ink-2)}
+.wheel .w-cta{font-size:14px;font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.wheel-a .w-cta{color:var(--teal)}
+.wheel-b .w-cta{color:var(--purple)}
+
+/* ===== 服务类目 ===== */
+.cats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:64px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:20px 14px;text-align:center;transition:all .18s var(--ease);cursor:pointer}
+.cat:hover{border-color:var(--blue-2);box-shadow:var(--shadow);transform:translateY(-2px)}
+.cat .c-icon{font-size:26px;margin-bottom:10px}
+.cat .c-name{font-size:14px;font-weight:500}
+.cat .c-sub{font-size:11.5px;color:var(--ink-3);margin-top:3px}
+
+/* ===== 数据墙 ===== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:64px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px}
+.stat .num{font-family:"Geist",sans-serif;font-size:32px;font-weight:500;letter-spacing:-0.5px;color:var(--blue-deep)}
+.stat .num small{font-size:16px;color:var(--ink-3)}
+.stat .lbl{font-size:13px;color:var(--ink-2);margin-top:4px}
+.stat .note{font-size:11px;color:var(--ink-3);margin-top:2px}
+
+/* ===== 卡片网格 ===== */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;transition:all .18s var(--ease)}
+.card:hover{border-color:var(--line-2);box-shadow:var(--shadow)}
+.card .t{font-size:16px;font-weight:500;margin-bottom:6px}
+.card .d{font-size:13px;color:var(--ink-2)}
+.card .row{display:flex;align-items:center;justify-content:space-between;margin-top:16px}
+.price{font-family:"Geist",sans-serif;font-size:19px;font-weight:500;color:var(--orange)}
+.price small{font-size:12px;color:var(--ink-3);font-weight:400}
+.meta{font-size:12px;color:var(--ink-3);display:flex;gap:12px;align-items:center}
+
+/* ===== 服务类 tab 列表页 ===== */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.tabs button{padding:8px 18px;border-radius:99px;font-size:13.5px;border:1px solid var(--line-2);color:var(--ink-2);transition:all .15s var(--ease)}
+.tabs button:hover{border-color:var(--blue);color:var(--blue)}
+.tabs button.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:500}
+.svc-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:all .18s var(--ease);cursor:pointer}
+.svc-card:hover{border-color:var(--line-2);box-shadow:var(--shadow);transform:translateY(-2px)}
+.svc-card .head{display:flex;align-items:center;gap:12px;padding:20px 20px 0}
+.svc-card .ava{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+.svc-card .h-name{font-size:15px;font-weight:500;line-height:1.3}
+.svc-card .h-sub{font-size:11.5px;color:var(--ink-3)}
+.svc-card .body{padding:14px 20px 18px}
+.svc-card .svc-name{font-size:14px;font-weight:500;margin-bottom:10px}
+.svc-card .svc-desc{font-size:12.5px;color:var(--ink-2);min-height:38px}
+.svc-card .foot{display:flex;align-items:center;justify-content:space-between;padding:0 20px 18px}
+.stars{color:var(--amber);font-size:13px;letter-spacing:1px}
+
+/* ===== 流程向导 ===== */
+.steps{display:flex;gap:10px;margin-bottom:30px}
+.step{flex:1;padding:16px 18px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;transition:all .18s var(--ease)}
+.step .n{font-family:"Geist",sans-serif;font-size:12px;color:var(--ink-3);display:block;margin-bottom:4px}
+.step .t{font-size:14px;font-weight:500}
+.step .s{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.step.active{border-color:var(--blue);background:var(--blue-soft)}
+.step.active .n{color:var(--blue)}
+.step.active .t{color:var(--blue-deep)}
+.step.done{border-color:var(--green);background:var(--green-soft)}
+.step.done .n{color:var(--green)}
+.panel{display:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;animation:fade .3s var(--ease)}
+.panel.active{display:block}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field label{display:block;font-size:13px;font-weight:500;margin-bottom:7px;color:var(--ink-2)}
+.field input,.field select{width:100%;padding:11px 14px;border:1px solid var(--line-2);border-radius:10px;font-size:14px;font-family:inherit;background:var(--surface);color:var(--ink);transition:border-color .15s}
+.field input:focus,.field select:focus{outline:2px solid var(--blue);outline-offset:-1px;border-color:var(--blue)}
+.field .hint{font-size:11.5px;color:var(--ink-3);margin-top:5px}
+.field .full{grid-column:1/-1}
+.checkrow{display:flex;align-items:center;gap:10px;padding:13px 16px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.checkrow:hover{border-color:var(--blue-2)}
+.checkrow.on{border-color:var(--blue);background:var(--blue-soft)}
+.checkrow .box{width:19px;height:19px;border-radius:6px;border:1.5px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0;transition:all .15s}
+.checkrow.on .box{background:var(--blue);border-color:var(--blue)}
+.checkrow .txt{flex:1}
+.checkrow .txt b{display:block;font-size:14px;font-weight:500}
+.checkrow .txt span{font-size:12px;color:var(--ink-2)}
+.checkrow .fee{font-family:"Geist",sans-serif;font-size:14px;font-weight:500;color:var(--green)}
+
+/* ===== 政策速配 ===== */
+.policy-wrap{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start}
+.quiz{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px}
+.quiz h3{font-size:17px;font-weight:500;margin-bottom:20px}
+.quiz .q{margin-bottom:20px}
+.quiz .q label{display:block;font-size:13px;font-weight:500;color:var(--ink-2);margin-bottom:8px}
+.quiz .opts{display:flex;flex-wrap:wrap;gap:8px}
+.quiz .opt{padding:8px 16px;border:1px solid var(--line-2);border-radius:99px;font-size:13px;color:var(--ink-2);cursor:pointer;transition:all .15s}
+.quiz .opt:hover{border-color:var(--blue)}
+.quiz .opt.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.policy-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px;display:flex;gap:18px;align-items:flex-start;transition:all .18s}
+.policy-card:hover{border-color:var(--line-2);box-shadow:var(--shadow)}
+.policy-card .p-amt{font-family:"Geist",sans-serif;font-size:26px;font-weight:500;color:var(--green);white-space:nowrap;min-width:110px}
+.policy-card .p-amt small{display:block;font-size:11px;color:var(--ink-3);font-weight:400}
+.policy-card .p-t{font-size:15px;font-weight:500;margin-bottom:4px}
+.policy-card .p-d{font-size:12.5px;color:var(--ink-2)}
+.policy-card .p-meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.result-empty{display:none;text-align:center;padding:60px 0;color:var(--ink-3);font-size:14px}
+
+/* ===== 需求大厅 ===== */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;align-items:center}
+.filters button{padding:8px 18px;border-radius:99px;font-size:13.5px;border:1px solid var(--line-2);color:var(--ink-2);transition:all .15s}
+.filters button.active{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:500}
+.filters .spacer{flex:1}
+.demand{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px 24px;margin-bottom:14px;cursor:pointer;transition:all .18s;display:block;text-align:left;width:100%}
+.demand:hover{border-color:var(--line-2);box-shadow:var(--shadow)}
+.demand .d-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.demand .d-title{font-size:16px;font-weight:500}
+.demand .d-desc{font-size:13px;color:var(--ink-2);margin-bottom:14px}
+.demand .d-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.demand .reward{font-family:"Geist",sans-serif;font-size:18px;font-weight:500;color:var(--orange)}
+
+/* ===== 需求详情 ===== */
+.detail-grid{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+.detail-main,.detail-side{display:flex;flex-direction:column;gap:18px}
+.sec-box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+.sec-box h3{font-size:16px;font-weight:500;margin-bottom:14px}
+.bid{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.bid:last-child{border-bottom:none}
+.bid .b-ava{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+.bid .b-info{flex:1}
+.bid .b-name{font-size:14px;font-weight:500}
+.bid .b-plan{font-size:13px;color:var(--ink-2);margin:5px 0}
+.bid .b-meta{font-size:12px;color:var(--ink-3);display:flex;gap:12px}
+.bid .b-price{font-family:"Geist",sans-serif;font-size:17px;font-weight:500;color:var(--blue);white-space:nowrap}
+.guarantee{background:var(--green-soft);border:1px solid oklch(0.85 0.06 150);border-radius:var(--radius);padding:22px}
+.guarantee h4{font-size:15px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.flow{display:flex;align-items:center;gap:8px;margin:14px 0;flex-wrap:wrap}
+.flow .node{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 13px;font-size:12.5px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.flow .node.on{background:var(--green);border-color:var(--green);color:#fff}
+.flow .arrow{color:var(--ink-3);font-size:12px}
+
+/* ===== 店铺 ===== */
+.shop-head{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;display:flex;gap:24px;align-items:center;margin-bottom:24px}
+.shop-head .ava{width:72px;height:72px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;flex-shrink:0}
+.shop-head .s-name{font-size:22px;font-weight:500}
+.shop-head .s-desc{font-size:13px;color:var(--ink-2);margin-top:4px}
+.shop-head .s-meta{display:flex;gap:22px;margin-top:14px}
+.shop-head .s-meta b{font-family:"Geist",sans-serif;font-size:18px;font-weight:500}
+.shop-head .s-meta span{font-size:12px;color:var(--ink-3);display:block}
+.review{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--line)}
+.review:last-child{border-bottom:none}
+.review .r-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;flex-shrink:0}
+.review .r-name{font-size:13.5px;font-weight:500}
+.review .r-text{font-size:13px;color:var(--ink-2);margin-top:4px}
+
+/* ===== 工作台 ===== */
+.dash-grid{display:grid;grid-template-columns:230px 1fr;gap:24px;align-items:start}
+.dash-menu{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;position:sticky;top:88px}
+.dash-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border-radius:10px;font-size:14px;color:var(--ink-2);margin-bottom:4px;transition:all .15s;text-align:left}
+.dash-menu button:hover{background:var(--surface-2)}
+.dash-menu button.active{background:var(--blue-soft);color:var(--blue-deep);font-weight:500}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+.kpi .k-num{font-family:"Geist",sans-serif;font-size:26px;font-weight:500;color:var(--blue-deep)}
+.kpi .k-lbl{font-size:12.5px;color:var(--ink-2);margin-top:3px}
+.todo{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.todo-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.todo-item:last-child{border-bottom:none}
+.todo-item .t-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.todo-item .t-txt{flex:1;font-size:14px}
+.todo-item .t-txt small{display:block;font-size:12px;color:var(--ink-3)}
+.todo-item .t-act{font-size:13px;color:var(--blue);font-weight:500}
+
+/* ===== 页脚 ===== */
+footer{border-top:1px solid var(--line);background:var(--surface);padding:36px 0 28px;margin-top:40px}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;margin-bottom:28px}
+.foot-grid h5{font-size:13px;font-weight:500;margin-bottom:12px;color:var(--ink)}
+.foot-grid a{display:block;font-size:13px;color:var(--ink-2);padding:3px 0}
+.foot-grid a:hover{color:var(--blue)}
+.foot-note{border-top:1px solid var(--line);padding-top:18px;font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* ===== 演示说明页 ===== */
+.notes-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:36px;margin-bottom:24px}
+.notes-hero h1{font-size:26px;font-weight:500;margin-bottom:10px}
+.notes-hero p{color:var(--ink-2);font-size:14px;max-width:720px}
+.notes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.note-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.note-card h4{font-size:15px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.note-card ul{list-style:none}
+.note-card li{font-size:13px;color:var(--ink-2);padding:5px 0;display:flex;gap:8px;align-items:flex-start}
+.note-card li i{font-style:normal;color:var(--blue);flex-shrink:0}
+.warn{background:var(--amber-soft);border:1px solid oklch(0.85 0.08 80);border-radius:var(--radius-sm);padding:14px 18px;font-size:13px;color:oklch(0.45 0.1 60);margin-bottom:20px;display:flex;gap:10px;align-items:flex-start}
+
+@media(max-width:960px){
+  .wheels,.grid3,.stats,.policy-wrap,.detail-grid,.dash-grid,.notes-grid{grid-template-columns:1fr}
+  .cats{grid-template-columns:repeat(3,1fr)}
+  .hero{padding:40px 28px}
+  .hero h1{font-size:32px}
+  .menu{display:none}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .form-grid{grid-template-columns:1fr}
+  .govbar .wrap{font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<!-- 政府背书条 -->
+<div class="govbar">
+  <div class="wrap">
+    <span class="star">★</span>
+    <span>盘锦市人力资源和社会保障局 · OPC 创业联盟 <b>指定服务平台</b>（原型示意）</span>
+  </div>
+</div>
+
+<!-- 主导航 -->
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="javascript:void(0)" onclick="go('home')">
+      <span class="logo">OPC</span>
+      <span>OPC 创业联盟<small>一人公司一体化服务平台</small></span>
+    </a>
+    <nav class="menu" id="mainMenu">
+      <button data-v="home" onclick="go('home')" class="active">首页</button>
+      <button data-v="startup" onclick="go('startup')">开办服务</button>
+      <button data-v="service" onclick="go('service')">运营服务</button>
+      <button data-v="policy" onclick="go('policy')">政策速配</button>
+      <button data-v="market" onclick="go('market')">需求大厅</button>
+      <button data-v="dashboard" onclick="go('dashboard')">我的工作台</button>
+    </nav>
+    <div class="nav-cta">
+      <button class="btn btn-orange" onclick="go('market');setTimeout(()=>publishModal(),300)">发布需求</button>
+      <button class="btn btn-ghost" onclick="go('notes')">原型说明</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 首页 ============ -->
+<section class="view active" id="view-home" role="region" aria-label="首页">
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="inner">
+        <span class="pill"><span class="dot"></span>辽宁省 OPC 培育发展重点工程 · 盘锦样板</span>
+        <h1>开一家一人公司，<br>不用再一个人硬扛 <em>所有事</em></h1>
+        <p class="sub">从注册开办、记账报税、法律合规，到找客户、接订单、赚到钱——一个平台全包。一个人 + AI，就能撑起一家公司。</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="go('startup')">我要开公司 →</button>
+          <button class="btn btn-orange" onclick="go('market')">我要接单赚钱 →</button>
+        </div>
+        <div class="trust">
+          <span><i>✓</i> 人社局联盟官方背书</span>
+          <span><i>✓</i> 开办补贴 0 元起</span>
+          <span><i>✓</i> 赏金托管交易保障</span>
+          <span><i>✓</i> AI 助手全程陪伴</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 双轮入口 -->
+    <div class="wheels">
+      <div class="wheel wheel-a" onclick="go('startup')">
+        <div class="w-icon">🛠</div>
+        <h3>OPC 服务台</h3>
+        <p class="w-sub">把开公司、养公司的麻烦事，全部外包给平台</p>
+        <div class="w-list">
+          <span>工商注册</span><span>代理记账</span><span>税务筹划</span><span>法律顾问</span><span>人力资源</span><span>商标知产</span><span>政策补贴</span><span>AI 工具</span>
+        </div>
+        <span class="w-cta">进入服务台 →</span>
+      </div>
+      <div class="wheel wheel-b" onclick="go('market')">
+        <div class="w-icon">💼</div>
+        <h3>OPC 业务场</h3>
+        <p class="w-sub">把一个人的能力，变成源源不断的订单</p>
+        <div class="w-list">
+          <span>需求大厅</span><span>威客竞标</span><span>赏金托管</span><span>服务商店铺</span><span>智能撮合</span><span>信用体系</span>
+        </div>
+        <span class="w-cta">进入业务场 →</span>
+      </div>
+    </div>
+
+    <!-- 服务类目 -->
+    <div class="sec-head">
+      <div>
+        <h2>一站式企业服务</h2>
+        <p>从开办到运营，覆盖一人公司的全部高频需求</p>
+      </div>
+      <span class="more" onclick="go('service')">查看全部服务 →</span>
+    </div>
+    <div class="cats">
+      <div class="cat" onclick="go('startup')"><div class="c-icon">📋</div><div class="c-name">工商注册</div><div class="c-sub">0 元起 · 补贴减免</div></div>
+      <div class="cat" onclick="go('service')"><div class="c-icon">🧾</div><div class="c-name">代理记账</div><div class="c-sub">¥99/月起</div></div>
+      <div class="cat" onclick="go('service')"><div class="c-icon">⚖️</div><div class="c-name">法律顾问</div><div class="c-sub">合同·纠纷·合规</div></div>
+      <div class="cat" onclick="go('service')"><div class="c-icon">👥</div><div class="c-name">人力资源</div><div class="c-sub">社保·代缴·薪酬</div></div>
+      <div class="cat" onclick="go('service')"><div class="c-icon">🏷️</div><div class="c-name">商标知产</div><div class="c-sub">注册·变更·维权</div></div>
+      <div class="cat" onclick="go('service')"><div class="c-icon">📢</div><div class="c-name">营销推广</div><div class="c-sub">SEO·短视频·投放</div></div>
+      <div class="cat" onclick="go('market')"><div class="c-icon">💻</div><div class="c-name">网站开发</div><div class="c-sub">官网·小程序·商城</div></div>
+      <div class="cat" onclick="go('market')"><div class="c-icon">🎨</div><div class="c-name">设计美工</div><div class="c-sub">LOGO·海报·UI</div></div>
+      <div class="cat" onclick="go('market')"><div class="c-icon">✍️</div><div class="c-name">文案写作</div><div class="c-sub">软文·方案·脚本</div></div>
+      <div class="cat" onclick="go('market')"><div class="c-icon">🎬</div><div class="c-name">视频制作</div><div class="c-sub">口播·剪辑·动画</div></div>
+      <div class="cat" onclick="go('policy')"><div class="c-icon">🎯</div><div class="c-name">政策补贴</div><div class="c-sub">申报·速配·提醒</div></div>
+      <div class="cat" onclick="go('dashboard')"><div class="c-icon">🤖</div><div class="c-name">AI 工具</div><div class="c-sub">文案·作图·数字人</div></div>
+    </div>
+
+    <!-- 数据墙 -->
+    <div class="sec-head">
+      <div>
+        <h2>联盟运行成果</h2>
+        <p>平台数据为原型示意，用于展示预期效果</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="num">328<small> 家</small></div><div class="lbl">入驻 OPC 一人公司</div><div class="note">目标：2028 年 300 家（省定目标）</div></div>
+      <div class="stat"><div class="num">1,260<small> 万</small></div><div class="lbl">累计撮合交易额</div><div class="note">含企业服务与威客接单</div></div>
+      <div class="stat"><div class="num">156<small> 家</small></div><div class="lbl">认证服务商</div><div class="note">财务·法务·技术·设计等</div></div>
+      <div class="stat"><div class="num">2,100<small> 万</small></div><div class="lbl">政策补贴落地</div><div class="note">补贴·贴息·奖励直通</div></div>
+    </div>
+
+    <!-- 热门需求 + 政策动态 -->
+    <div class="grid2" style="margin-bottom:0">
+      <div class="sec-box" style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-size:17px;font-weight:500">🔥 热门需求</h3>
+          <span class="more" style="font-size:13px;color:var(--blue);font-weight:500;cursor:pointer" onclick="go('market')">进入大厅 →</span>
+        </div>
+        <div class="demand" onclick="go('detail')">
+          <div class="d-top"><span class="tag tag-blue">网站开发</span><span class="d-title">盘锦某餐饮连锁品牌官网改版</span></div>
+          <div class="d-desc">要求响应式设计、支持在线订座，工期 15 天，需本地服务商优先。</div>
+          <div class="d-foot"><span class="reward">¥ 8,000</span><span class="meta">报名 6 人 · 托管中 · 2 小时前</span></div>
+        </div>
+        <div class="demand" onclick="go('detail')">
+          <div class="d-top"><span class="tag tag-orange">视频制作</span><span class="d-title">农机企业产品宣传口播视频 ×3 条</span></div>
+          <div class="d-desc">每条约 60 秒，含字幕，风格务实专业，提供文案大纲参考。</div>
+          <div class="d-foot"><span class="reward">¥ 3,600</span><span class="meta">报名 9 人 · 托管中 · 5 小时前</span></div>
+        </div>
+        <div class="demand" onclick="go('detail')">
+          <div class="d-top"><span class="tag tag-green">营销推广</span><span class="d-title">本地教育机构抖音获客代运营（月包）</span></div>
+          <div class="d-desc">每月 12 条短视频 + 账号运营，按线索量结算，长期合作。</div>
+          <div class="d-foot"><span class="reward">¥ 6,000 /月</span><span class="meta">报名 4 人 · 托管中 · 1 天前</span></div>
+        </div>
+      </div>
+      <div class="sec-box" style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-size:17px;font-weight:500">📌 政策动态</h3>
+          <span class="more" style="font-size:13px;color:var(--blue);font-weight:500;cursor:pointer" onclick="go('policy')">政策速配 →</span>
+        </div>
+        <div style="padding:14px 0;border-bottom:1px solid var(--line)">
+          <div style="font-size:14px;font-weight:500">一次性创业补贴申报开启</div>
+          <div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">毕业 5 年内或登记失业人员创办企业，可申领 ¥3,000</div>
+          <div style="margin-top:8px"><span class="tag tag-red">申报中 · 至 10/31</span></div>
+        </div>
+        <div style="padding:14px 0;border-bottom:1px solid var(--line)">
+          <div style="font-size:14px;font-weight:500">OPC 创业场地补贴新政</div>
+          <div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">入驻联盟工位/虚拟地址，最长补贴 24 个月，最高 1.2 万/年</div>
+          <div style="margin-top:8px"><span class="tag tag-green">新政策</span></div>
+        </div>
+        <div style="padding:14px 0">
+          <div style="font-size:14px;font-weight:500">个人创业担保贷款贴息</div>
+          <div style="font-size:12.5px;color:var(--ink-2);margin-top:3px">最高 30 万，财政贴息 50%，一人公司优先</div>
+          <div style="margin-top:8px"><span class="tag tag-blue">联盟专属通道</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 开办服务 ============ -->
+<section class="view" id="view-startup" role="region" aria-label="开办服务">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>开办服务 · 最快 1 天拿到营业执照</h2>
+        <p>对接辽宁政务服务网"一网通办"，全程线上，补贴帮你自动申报</p>
+      </div>
+      <div style="display:flex;gap:10px">
+        <span class="tag tag-green">政府补贴 · 注册 0 元</span>
+        <span class="tag tag-blue">全程代办可选</span>
+      </div>
+    </div>
+
+    <!-- 步骤条 -->
+    <div class="steps" id="startupSteps">
+      <div class="step active" data-s="1" onclick="stepGo(1)"><span class="n">STEP 1</span><span class="t">名称自主申报</span><span class="s">字号查重 · 类型选择</span></div>
+      <div class="step" data-s="2" onclick="stepGo(2)"><span class="n">STEP 2</span><span class="t">设立登记</span><span class="s">一人有限公司 · 电子签名</span></div>
+      <div class="step" data-s="3" onclick="stepGo(3)"><span class="n">STEP 3</span><span class="t">刻章与开户</span><span class="s">免费刻章 · 银行预约</span></div>
+      <div class="step" data-s="4" onclick="stepGo(4)"><span class="n">STEP 4</span><span class="t">税务社保</span><span class="s">税务登记 · 社保公积金</span></div>
+    </div>
+
+    <!-- 步骤面板 -->
+    <div class="panel active" data-p="1">
+      <div class="form-grid">
+        <div class="field full">
+          <label>企业名称（字号）</label>
+          <input type="text" value="盘锦智创网络科技有限公司" placeholder="输入你想起的字号">
+          <div class="hint">格式：行政区划 + 字号 + 行业 + 组织形式；一人有限公司需在登记时确认股东 100% 出资</div>
+        </div>
+        <div class="field">
+          <label>企业类型</label>
+          <select><option>有限责任公司（自然人独资）— 推荐</option><option>个人独资企业</option><option>个体工商户</option></select>
+        </div>
+        <div class="field">
+          <label>行业门类</label>
+          <select><option>信息技术服务</option><option>商务服务</option><option>设计传媒</option><option>电商贸易</option><option>教育咨询</option></select>
+        </div>
+        <div class="field full">
+          <label>注册地址</label>
+          <div class="checkrow on">
+            <div class="box">✓</div>
+            <div class="txt"><b>联盟虚拟地址 / 工位注册</b><span>人社局 OPC 联盟提供，享受场地补贴，支持一址多照、工位注册</span></div>
+            <span class="fee">0 元 / 年</span>
+          </div>
+          <div class="checkrow">
+            <div class="box"></div>
+            <div class="txt"><b>自有地址</b><span>填写房产证或租赁合同信息</span></div>
+            <span class="fee" style="color:var(--ink-3)">—</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:26px;align-items:center">
+        <span style="font-size:12.5px;color:var(--ink-3)">本步由平台 AI 导办自动填充，平均用时 3 分钟</span>
+        <button class="btn btn-primary" onclick="stepGo(2)">下一步：设立登记 →</button>
+      </div>
+    </div>
+
+    <div class="panel" data-p="2">
+      <div class="form-grid">
+        <div class="field">
+          <label>投资人信息（一人公司出资比例 100%）</label>
+          <input type="text" value="张三（示例）" placeholder="姓名">
+          <div class="hint">需本人实名认证 + 电子签名</div>
+        </div>
+        <div class="field">
+          <label>董监高设置</label>
+          <select><option>不设董事会，只设执行董事一名（推荐）</option><option>标准董事会</option></select>
+          <div class="hint">一人公司规模小，依法可不设董事会、监事会</div>
+        </div>
+        <div class="field full">
+          <label>经营范围（平台智能推荐）</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span class="tag tag-blue">互联网信息服务</span>
+            <span class="tag tag-blue">软件开发</span>
+            <span class="tag tag-blue">广告设计制作</span>
+            <span class="tag tag-gray">技术咨询</span>
+            <span class="tag tag-gray">会议服务</span>
+          </div>
+          <div class="hint">基于行业自动推荐规范条目，避免多写导致税务核定偏差</div>
+        </div>
+        <div class="field">
+          <label>登记联络员</label>
+          <input type="text" value="本人（自动带入）">
+        </div>
+        <div class="field">
+          <label>财务负责人</label>
+          <input type="text" value="本人（自动带入）">
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:26px">
+        <button class="btn btn-ghost" onclick="stepGo(1)">← 上一步</button>
+        <button class="btn btn-primary" onclick="stepGo(3)">下一步：刻章开户 →</button>
+      </div>
+    </div>
+
+    <div class="panel" data-p="3">
+      <div class="form-grid">
+        <div class="field">
+          <label>公章刻制</label>
+          <div class="checkrow on"><div class="box">✓</div><div class="txt"><b>政府免费刻章（5 枚）</b><span>公章、财务章、发票章、合同章、法人章</span></div><span class="fee">0 元</span></div>
+        </div>
+        <div class="field">
+          <label>银行开户</label>
+          <div class="checkrow"><div class="box"></div><div class="txt"><b>平台合作银行预约</b><span>对接本地网点，绿色通道，1 个工作日内办理</span></div><span class="fee" style="color:var(--ink-3)">免排队</span></div>
+        </div>
+        <div class="field full">
+          <label>同步办理（勾选即一并申报）</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <span class="tag tag-gray" style="padding:7px 14px;cursor:pointer">☐ 新办企业电子税务局</span>
+            <span class="tag tag-gray" style="padding:7px 14px;cursor:pointer">☐ 就业参保登记</span>
+            <span class="tag tag-gray" style="padding:7px 14px;cursor:pointer">☐ 住房公积金缴存登记</span>
+            <span class="tag tag-gray" style="padding:7px 14px;cursor:pointer">☐ 用电/宽带报装</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:26px">
+        <button class="btn btn-ghost" onclick="stepGo(2)">← 上一步</button>
+        <button class="btn btn-primary" onclick="stepGo(4)">下一步：税务社保 →</button>
+      </div>
+    </div>
+
+    <div class="panel" data-p="4">
+      <div class="form-grid">
+        <div class="field">
+          <label>税务登记</label>
+          <div class="checkrow on"><div class="box">✓</div><div class="txt"><b>新办纳税人套餐</b><span>自动核定税种，小规模纳税人按 1% 征收</span></div><span class="fee">自动</span></div>
+        </div>
+        <div class="field">
+          <label>社保公积金</label>
+          <div class="checkrow on"><div class="box">✓</div><div class="txt"><b>本人参保登记</b><span>一人公司可本人参保，灵活就业与企业参保对比已算好</span></div><span class="fee">自动</span></div>
+        </div>
+        <div class="field full">
+          <label>代理记账推荐（办完即可托管）</label>
+          <div class="checkrow on"><div class="box">✓</div><div class="txt"><b>联盟认证代账 · 首年 ¥99/月</b><span>月度申报 + 年度汇算 + 政策减免提醒，补贴抵扣后约 ¥0</span></div><span class="fee">¥99/月</span></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:26px">
+        <button class="btn btn-ghost" onclick="stepGo(3)">← 上一步</button>
+        <button class="btn btn-orange" onclick="alert('原型演示：提交后将自动完成全流程申报，并同步推送补贴申报任务到工作台')">提交申报 →</button>
+      </div>
+    </div>
+
+    <!-- 右侧辅助信息 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:28px">
+      <div class="card">
+        <div class="t">📄 材料清单</div>
+        <div class="d">身份证、企业名称、注册地址、经营范围——4 样就够，其余平台自动生成</div>
+      </div>
+      <div class="card">
+        <div class="t">💰 费用透明</div>
+        <div class="d">注册 0 元（政府补贴）+ 免费刻章 + 虚拟地址 0 元，比传统代办省 ¥1,500+</div>
+      </div>
+      <div class="card">
+        <div class="t">🤖 AI 导办</div>
+        <div class="d">卡在哪一步、表怎么填，随时问 AI 助手，7×24 小时在线</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 运营服务 ============ -->
+<section class="view" id="view-service" role="region" aria-label="运营服务">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>运营服务 · 公司的杂事，交给专业的人</h2>
+        <p>所有服务商均经联盟认证，价格公示，不满意可申诉</p>
+      </div>
+      <span class="tag tag-green">认证服务商 156 家</span>
+    </div>
+
+    <div class="tabs" id="svcTabs">
+      <button class="active" data-c="all" onclick="svcTab('all',this)">全部</button>
+      <button data-c="account" onclick="svcTab('account',this)">代理记账</button>
+      <button data-c="tax" onclick="svcTab('tax',this)">税务筹划</button>
+      <button data-c="law" onclick="svcTab('law',this)">法律顾问</button>
+      <button data-c="hr" onclick="svcTab('hr',this)">人力资源</button>
+      <button data-c="ip" onclick="svcTab('ip',this)">商标知产</button>
+    </div>
+
+    <div class="grid3" id="svcGrid">
+      <div class="svc-card" data-c="account">
+        <div class="head">
+          <div class="ava" style="background:var(--teal)">财</div>
+          <div><div class="h-name">盘锦顺达财务咨询</div><div class="h-sub">联盟认证 · 10 年经验</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">一人公司专属代账套餐</div>
+          <div class="svc-desc">月度记账申报、年度汇算清缴、政策减免自动测算，专属会计 1v1</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥99<small>/月起</small></span>
+          <span class="meta"><span class="stars">★★★★★</span> 4.9 · 320+ 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="account">
+        <div class="head">
+          <div class="ava" style="background:var(--blue)">记</div>
+          <div><div class="h-name">盘锦启航企业服务</div><div class="h-sub">联盟认证 · 会计事务所背景</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">年度财税托管（含补贴申报）</div>
+          <div class="svc-desc">全年账务 + 每季申报 + 一次创业补贴/场地补贴代办，漏补贴双倍赔付</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥1,680<small>/年</small></span>
+          <span class="meta"><span class="stars">★★★★★</span> 5.0 · 186 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="tax">
+        <div class="head">
+          <div class="ava" style="background:var(--orange)">税</div>
+          <div><div class="h-name">盘锦金穗税务师事务所</div><div class="h-sub">联盟认证 · 税务师团队</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">OPC 税负优化方案</div>
+          <div class="svc-desc">小规模 vs 一般纳税人测算、开票规划、核定征收合规方案</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥500<small>/次</small></span>
+          <span class="meta"><span class="stars">★★★★☆</span> 4.8 · 96 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="law">
+        <div class="head">
+          <div class="ava" style="background:var(--purple)">法</div>
+          <div><div class="h-name">辽宁恒信律师事务所</div><div class="h-sub">联盟认证 · 企业法务组</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">一人公司常年法律顾问</div>
+          <div class="svc-desc">合同模板库、业务合同审查、应收账款催收、劳动纠纷应对</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥2,000<small>/年起</small></span>
+          <span class="meta"><span class="stars">★★★★★</span> 4.9 · 210 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="law">
+        <div class="head">
+          <div class="ava" style="background:oklch(0.5 0.13 20)">维</div>
+          <div><div class="h-name">盘锦正和法律咨询</div><div class="h-sub">联盟认证 · 仲裁调解</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">合同审查单次服务（48h）</div>
+          <div class="svc-desc">业务合同、合作协议快速审查，出具书面风险提示与修改建议</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥299<small>/份</small></span>
+          <span class="meta"><span class="stars">★★★★★</span> 4.9 · 412 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="hr">
+        <div class="head">
+          <div class="ava" style="background:var(--green)">人</div>
+          <div><div class="h-name">盘锦人和人力</div><div class="h-sub">联盟认证 · 人力资源</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">社保公积金代缴托管</div>
+          <div class="svc-desc">个人+企业双参保测算、月度代缴、基数申报、年度调整提醒</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥50<small>/月/人</small></span>
+          <span class="meta"><span class="stars">★★★★☆</span> 4.8 · 530 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="hr">
+        <div class="head">
+          <div class="ava" style="background:oklch(0.5 0.12 210)">薪</div>
+          <div><div class="h-name">盘锦薪管家</div><div class="h-sub">联盟认证 · 薪酬个税</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">薪酬个税代算代报</div>
+          <div class="svc-desc">工资核算、个税申报、专项附加扣除配置，月结账单自动推送</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥30<small>/月/人</small></span>
+          <span class="meta"><span class="stars">★★★★☆</span> 4.7 · 260 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="ip">
+        <div class="head">
+          <div class="ava" style="background:oklch(0.55 0.1 300)">标</div>
+          <div><div class="h-name">盘锦知产通</div><div class="h-sub">联盟认证 · 商标代理</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">商标注册（含查询报告）</div>
+          <div class="svc-desc">商标检索分析、注册申请、驳回应对，注册失败按协议退款</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥680<small>/件</small></span>
+          <span class="meta"><span class="stars">★★★★★</span> 5.0 · 148 单</span>
+        </div>
+      </div>
+      <div class="svc-card" data-c="ip">
+        <div class="head">
+          <div class="ava" style="background:oklch(0.52 0.11 160)">软</div>
+          <div><div class="h-name">盘锦软著服务中心</div><div class="h-sub">联盟认证 · 软著代办</div></div>
+        </div>
+        <div class="body">
+          <div class="svc-name">软件著作权登记加急</div>
+          <div class="svc-desc">材料整理、源代码格式规范、登记申报，30-40 个工作日下证</div>
+        </div>
+        <div class="foot">
+          <span class="price">¥450<small>/件</small></span>
+          <span class="meta"><span class="stars">★★★★☆</span> 4.8 · 175 单</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 政策速配 ============ -->
+<section class="view" id="view-policy" role="region" aria-label="政策速配">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>政策速配 · 补贴找上门，不用你去找政策</h2>
+        <p>回答 3 个问题，自动匹配你符合的全部政策，到期自动提醒申报</p>
+      </div>
+    </div>
+
+    <div class="policy-wrap">
+      <div class="quiz">
+        <h3>告诉我你的情况（演示可随便点）</h3>
+        <div class="q">
+          <label>你现在处于哪个阶段？</label>
+          <div class="opts">
+            <span class="opt on" onclick="pick(this)">还没注册</span>
+            <span class="opt" onclick="pick(this)">已注册 1 年内</span>
+            <span class="opt" onclick="pick(this)">已注册 1 年以上</span>
+          </div>
+        </div>
+        <div class="q">
+          <label>你的身份属于？（可多选）</label>
+          <div class="opts">
+            <span class="opt on" onclick="pick(this)">毕业 5 年内</span>
+            <span class="opt" onclick="pick(this)">登记失业人员</span>
+            <span class="opt" onclick="pick(this)">退役军人</span>
+            <span class="opt" onclick="pick(this)">普通创业者</span>
+          </div>
+        </div>
+        <div class="q">
+          <label>主营业务方向</label>
+          <div class="opts">
+            <span class="opt on" onclick="pick(this)">AI/软件</span>
+            <span class="opt" onclick="pick(this)">电商直播</span>
+            <span class="opt" onclick="pick(this)">设计创意</span>
+            <span class="opt" onclick="pick(this)">本地生活</span>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="runMatch()">立即为我匹配 →</button>
+      </div>
+
+      <div>
+        <div class="result-empty" id="policyEmpty">点击左侧"立即为我匹配"查看可申领政策清单</div>
+        <div id="policyResults" style="display:none">
+          <div class="policy-card">
+            <div class="p-amt">¥3,000<small>一次性</small></div>
+            <div style="flex:1">
+              <div class="p-t">一次性创业补贴 <span class="tag tag-red" style="margin-left:6px">申报中 · 至 10/31</span></div>
+              <div class="p-d">毕业 5 年内或登记失业人员首次创办企业、正常经营 3 个月以上即可申领。平台已自动生成申报材料，一键提交。</div>
+              <div class="p-meta"><span class="tag tag-blue">平台已预填材料</span><span class="tag tag-gray">预计 20 个工作日到账</span></div>
+            </div>
+          </div>
+          <div class="policy-card">
+            <div class="p-amt">1.2 万<small>/年 · 最长 24 个月</small></div>
+            <div style="flex:1">
+              <div class="p-t">OPC 创业场地补贴 <span class="tag tag-green">新政策</span></div>
+              <div class="p-d">入驻联盟虚拟地址或指定园区工位，按月补贴租金，自动抵扣。你已选用联盟虚拟地址，无需额外申请。</div>
+              <div class="p-meta"><span class="tag tag-green">已自动生效</span><span class="tag tag-gray">按季核发</span></div>
+            </div>
+          </div>
+          <div class="policy-card">
+            <div class="p-amt">¥30 万<small>贷款额度 · 贴息 50%</small></div>
+            <div style="flex:1">
+              <div class="p-t">个人创业担保贷款贴息 <span class="tag tag-blue">联盟专属通道</span></div>
+              <div class="p-d">最高 30 万、期限最长 3 年，财政贴息 50%。一人公司无需担保人，信用评估通过即放款。</div>
+              <div class="p-meta"><span class="tag tag-gray">需信用评估</span><span class="tag tag-gray">合作银行 3 家</span></div>
+            </div>
+          </div>
+          <div class="policy-card">
+            <div class="p-amt">¥2,000<small>/人</small></div>
+            <div style="flex:1">
+              <div class="p-t">AI 技能培训补贴（红海滩课堂）</div>
+              <div class="p-d">参加人社局组织的 AI/OPC 创业培训，完成课时后按人补贴。联盟学员自动纳入名单。</div>
+              <div class="p-meta"><span class="tag tag-gray">下一期 9 月开班</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:28px">
+      <span>💡</span>
+      <span><b>“政策找人”机制：</b>政策一旦发布，系统按你的画像自动匹配并推送申报任务到工作台，不用自己盯文件。所有金额以人社局正式发文为准，原型中为示意。</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 需求大厅 ============ -->
+<section class="view" id="view-market" role="region" aria-label="需求大厅">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>需求大厅 · 企业需求在这里等你</h2>
+        <p>赏金由平台托管，验收通过才放款，接单不怕跑单</p>
+      </div>
+      <button class="btn btn-orange" onclick="publishModal()">+ 发布需求</button>
+    </div>
+
+    <div class="filters" id="mktFilters">
+      <button class="active" data-c="all" onclick="mktFilter('all',this)">全部需求</button>
+      <button data-c="dev" onclick="mktFilter('dev',this)">网站开发</button>
+      <button data-c="design" onclick="mktFilter('design',this)">设计美工</button>
+      <button data-c="copy" onclick="mktFilter('copy',this)">文案写作</button>
+      <button data-c="video" onclick="mktFilter('video',this)">视频制作</button>
+      <button data-c="mkt" onclick="mktFilter('mkt',this)">营销推广</button>
+      <span class="spacer"></span>
+      <span style="font-size:12.5px;color:var(--ink-3)">共 48 条进行中需求</span>
+    </div>
+
+    <div id="demandList">
+      <div class="demand" data-c="dev" onclick="go('detail')">
+        <div class="d-top"><span class="tag tag-blue">网站开发</span><span class="d-title">盘锦某餐饮连锁品牌官网改版</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+        <div class="d-desc">要求响应式设计、支持在线订座与团购核销接口，工期 15 天，需本地服务商优先，可长期合作。</div>
+        <div class="d-foot"><span class="reward">¥ 8,000</span><span class="meta">报名 6 人 · 2 小时前发布</span></div>
+      </div>
+      <div class="demand" data-c="video" onclick="go('detail')">
+        <div class="d-top"><span class="tag tag-orange">视频制作</span><span class="d-title">农机企业产品宣传口播视频 ×3 条</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+        <div class="d-desc">每条约 60 秒竖版，含字幕与 BGM，风格务实专业，提供文案大纲参考，验收后付全款。</div>
+        <div class="d-foot"><span class="reward">¥ 3,600</span><span class="meta">报名 9 人 · 5 小时前发布</span></div>
+      </div>
+      <div class="demand" data-c="mkt" onclick="go('detail')">
+        <div class="d-top"><span class="tag tag-green">营销推广</span><span class="d-title">本地教育机构抖音获客代运营（月包）</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+        <div class="d-desc">每月 12 条短视频 + 账号运营 + 线索收集，按线索量结算，可签 6 个月框架协议。</div>
+        <div class="d-foot"><span class="reward">¥ 6,000 /月</span><span class="meta">报名 4 人 · 1 天前发布</span></div>
+      </div>
+      <div class="demand" data-c="copy" onclick="go('detail')">
+        <div class="d-top"><span class="tag tag-purple">文案写作</span><span class="d-title">农产品品牌招商手册（含定位方案）</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+        <div class="d-desc">大米/河蟹特色农产品品牌，输出品牌定位、招商话术、渠道政策，约 2 万字。</div>
+        <div class="d-foot"><span class="reward">¥ 5,000</span><span class="meta">报名 5 人 · 2 天前发布</span></div>
+      </div>
+      <div class="demand" data-c="design" onclick="go('detail')">
+        <div class="d-top"><span class="tag tag-blue" style="background:var(--blue-soft);color:var(--blue-deep)">设计美工</span><span class="d-title">连锁药店 VI 视觉升级</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+        <div class="d-desc">LOGO 优化、门店门头、会员卡、海报模板一套，需提供 3 个方向初稿供选择。</div>
+        <div class="d-foot"><span class="reward">¥ 4,200</span><span class="meta">报名 7 人 · 3 天前发布</span></div>
+      </div>
+      <div class="demand" data-c="dev" onclick="go('detail')">
+        <div class="d-top"><span class="tag tag-blue">网站开发</span><span class="d-title">小程序商城开发（本地生鲜配送）</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+        <div class="d-desc">商品管理、社区团购、配送员端，需对接微信支付与公众号模板消息。</div>
+        <div class="d-foot"><span class="reward">¥ 12,000</span><span class="meta">报名 3 人 · 3 天前发布</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 需求详情 ============ -->
+<section class="view" id="view-detail" role="region" aria-label="需求详情">
+  <div class="wrap">
+    <div style="margin-bottom:18px;display:flex;gap:8px;align-items:center">
+      <button class="btn btn-ghost" style="padding:7px 14px;font-size:13px" onclick="go('market')">← 返回大厅</button>
+      <span class="badge" style="background:var(--green-soft);color:var(--green)">赏金已托管 · 交易受平台保障</span>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-main">
+        <div class="sec-box">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+            <span class="tag tag-blue">网站开发</span>
+            <span class="tag tag-gray">发布于 2 小时前</span>
+          </div>
+          <h3 style="font-size:22px;font-weight:500;margin-bottom:12px">盘锦某餐饮连锁品牌官网改版</h3>
+          <p style="font-size:14px;color:var(--ink-2);line-height:1.8">
+            现有官网为 2019 年建设，已无法适配移动端。本次改版目标：<br><br>
+            ① 响应式设计，桌面 + 手机体验一致；<br>
+            ② 在线订座 + 团购券核销接口（对接现有收银系统）；<br>
+            ③ 分店展示与导航，全部门店 12 家；<br>
+            ④ 后台可自行维护菜品与活动。<br><br>
+            预算 8,000 元，工期 15 天，接受分期验收。优先本地服务商，便于当面沟通与后续维护。
+          </p>
+          <div style="display:flex;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2)">
+            <span>👤 需求方：盘锦××餐饮管理有限公司（联盟会员）</span>
+            <span>🏆 信用分 4.9</span>
+            <span>✅ 实名认证</span>
+          </div>
+        </div>
+
+        <div class="sec-box">
+          <h3>竞标方案（6 人报名 · 已提交 4 份）</h3>
+          <div class="bid">
+            <div class="b-ava" style="background:var(--blue)">码</div>
+            <div class="b-info">
+              <div class="b-name">盘锦云码科技（OPC 会员）<span class="badge" style="background:var(--blue-soft);color:var(--blue-deep);margin-left:8px">联盟认证</span></div>
+              <div class="b-plan">15 天交付，采用响应式 + 现有收银系统 API 对接，含 3 个月免费维护。附 2 个同类餐饮官网案例。</div>
+              <div class="b-meta"><span>好评率 98%</span><span>已成交 42 单</span><span>响应 10 分钟</span></div>
+            </div>
+            <div class="b-price">¥ 7,600</div>
+          </div>
+          <div class="bid">
+            <div class="b-ava" style="background:var(--teal)">创</div>
+            <div class="b-info">
+              <div class="b-name">创界网络工作室</div>
+              <div class="b-plan">按 4 阶段分期验收（UI→开发→联调→上线），报价含订座小程序端。可先做首页 Demo 再签约。</div>
+              <div class="b-meta"><span>好评率 96%</span><span>已成交 28 单</span><span>响应 2 小时</span></div>
+            </div>
+            <div class="b-price">¥ 8,000</div>
+          </div>
+          <div class="bid">
+            <div class="b-ava" style="background:var(--purple)">自</div>
+            <div class="b-info">
+              <div class="b-name">自由职业者 王工（UI/前端）</div>
+              <div class="b-plan">专注餐饮行业模板重构，工期可压缩至 10 天，维护期按年收费 ¥800/年。</div>
+              <div class="b-meta"><span>好评率 99%</span><span>已成交 67 单</span><span>响应 1 小时</span></div>
+            </div>
+            <div class="b-price">¥ 6,500</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-side">
+        <div class="guarantee">
+          <h4>🛡 平台交易保障</h4>
+          <div class="flow">
+            <span class="node on">① 需求方托管赏金</span><span class="arrow">→</span>
+            <span class="node">② 服务商竞标</span><span class="arrow">→</span>
+            <span class="node">③ 选中签约</span>
+          </div>
+          <div class="flow">
+            <span class="node">④ 按节点交付</span><span class="arrow">→</span>
+            <span class="node">⑤ 验收放款</span><span class="arrow">→</span>
+            <span class="node">⑥ 评价沉淀信用</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--ink-2);margin-top:12px">
+            赏金由平台监管，未验收不划款；纠纷由联盟仲裁小组介入，7 天内出结果。
+          </div>
+        </div>
+        <div class="sec-box">
+          <h3>我要竞标</h3>
+          <div class="field" style="margin-bottom:12px">
+            <label>报价（元）</label>
+            <input type="number" placeholder="输入你的报价" value="7600">
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>方案摘要</label>
+            <textarea rows="3" style="width:100%;padding:11px 14px;border:1px solid var(--line-2);border-radius:10px;font-size:14px;font-family:inherit;resize:vertical" placeholder="说明你的优势、工期、交付内容…"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="alert('原型演示：竞标提交成功，需求方将在 48 小时内选择中标者')">提交竞标</button>
+          <div style="font-size:11.5px;color:var(--ink-3);margin-top:10px;text-align:center">免费竞标 · 中标后平台收取 5% 服务费（联盟会员 3%）</div>
+        </div>
+        <div class="sec-box">
+          <h3>需求方信用</h3>
+          <div style="font-size:13px;color:var(--ink-2);line-height:2">
+            <div>🏆 信用分：<b style="color:var(--blue-deep)">4.9</b> / 5.0</div>
+            <div>✅ 实名认证 · 已验营业执照</div>
+            <div>📦 历史发布 23 单 · 全部按时验收</div>
+            <div>💳 历史托管金额：¥186,000</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 我的工作台 ============ -->
+<section class="view" id="view-dashboard" role="region" aria-label="我的工作台">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <h2>我的工作台 · 一个人管好一家公司</h2>
+        <p>以 OPC 创业者视角：公司事务、接单赚钱、政策补贴，一处看全</p>
+      </div>
+      <div style="display:flex;gap:10px">
+        <span class="tag tag-blue">信用分 4.8</span>
+        <span class="tag tag-green">联盟认证会员</span>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-menu" id="dashMenu">
+        <button class="active" data-d="overview" onclick="dashTab('overview',this)">📊 总览</button>
+        <button data-d="myorders" onclick="dashTab('myorders',this)">📦 我的订单</button>
+        <button data-d="mybids" onclick="dashTab('mybids',this)">⚡ 我的接单</button>
+        <button data-d="mypolicy" onclick="dashTab('mypolicy',this)">🎯 我的政策</button>
+        <button data-d="myservices" onclick="dashTab('myservices',this)">🛠 我的服务</button>
+      </div>
+
+      <div>
+        <!-- 总览 -->
+        <div class="dash-panel" data-d="overview">
+          <div class="kpis">
+            <div class="kpi"><div class="k-num">¥28,600</div><div class="k-lbl">本月营收（接单收入）</div></div>
+            <div class="kpi"><div class="k-num">12</div><div class="k-lbl">进行中订单</div></div>
+            <div class="kpi"><div class="k-num">¥6,400</div><div class="k-lbl">待申报补贴金额</div></div>
+          </div>
+          <div class="todo">
+            <h3 style="font-size:16px;font-weight:500;margin-bottom:6px">今日待办（4 项）</h3>
+            <div style="font-size:12.5px;color:var(--ink-3);margin-bottom:10px">系统按优先级自动生成，完成一项少一项</div>
+            <div class="todo-item">
+              <span class="t-dot" style="background:var(--orange)"></span>
+              <div class="t-txt">提交一次性创业补贴申报<small>材料已预填 95% · 截止 10/31 · 金额 ¥3,000</small></div>
+              <span class="t-act">去申报 →</span>
+            </div>
+            <div class="todo-item">
+              <span class="t-dot" style="background:var(--blue)"></span>
+              <div class="t-txt">审核"农机宣传视频"中标方案<small>3 份竞标待选 · 赏金 ¥3,600 托管中</small></div>
+              <span class="t-act">去选择 →</span>
+            </div>
+            <div class="todo-item">
+              <span class="t-dot" style="background:var(--teal)"></span>
+              <div class="t-txt">交付"连锁药店 VI"第一版初稿<small>距截止还有 3 天 · 订单金额 ¥4,200</small></div>
+              <span class="t-act">去交付 →</span>
+            </div>
+            <div class="todo-item">
+              <span class="t-dot" style="background:var(--green)"></span>
+              <div class="t-txt">确认 7 月代账对账单<small>顺达财务已提交 · 应缴 ¥99</small></div>
+              <span class="t-act">去确认 →</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 我的订单 -->
+        <div class="dash-panel" data-d="myorders" style="display:none">
+          <div class="sec-box">
+            <h3>我发布的需求（作为需求方）</h3>
+            <div class="demand" onclick="go('detail')">
+              <div class="d-top"><span class="tag tag-blue">网站开发</span><span class="d-title">盘锦某餐饮连锁品牌官网改版</span><span class="badge" style="background:var(--green-soft);color:var(--green)">托管中</span></div>
+              <div class="d-foot"><span class="reward">¥ 8,000</span><span class="meta">报名 6 人 · 待选标</span></div>
+            </div>
+            <div class="demand">
+              <div class="d-top"><span class="tag tag-orange">视频制作</span><span class="d-title">农机企业产品宣传口播视频 ×3 条</span><span class="badge" style="background:var(--amber-soft);color:var(--amber)">制作中</span></div>
+              <div class="d-foot"><span class="reward">¥ 3,600</span><span class="meta">已选标 · 交付节点 9/5</span></div>
+            </div>
+            <div class="demand">
+              <div class="d-top"><span class="tag tag-green">营销推广</span><span class="d-title">本地教育机构抖音获客代运营</span><span class="badge" style="background:var(--blue-soft);color:var(--blue-deep)">进行中</span></div>
+              <div class="d-foot"><span class="reward">¥ 6,000 /月</span><span class="meta">第 2 期已付款</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 我的接单 -->
+        <div class="dash-panel" data-d="mybids" style="display:none">
+          <div class="sec-box">
+            <h3>我承接的订单（作为服务商）</h3>
+            <div class="demand">
+              <div class="d-top"><span class="tag tag-purple">设计美工</span><span class="d-title">连锁药店 VI 视觉升级</span><span class="badge" style="background:var(--amber-soft);color:var(--amber)">交付中</span></div>
+              <div class="d-foot"><span class="reward">¥ 4,200</span><span class="meta">剩余 3 天 · 客户信用 4.8</span></div>
+            </div>
+            <div class="demand">
+              <div class="d-top"><span class="tag tag-blue">网站开发</span><span class="d-title">大米品牌商城小程序（第二期）</span><span class="badge" style="background:var(--blue-soft);color:var(--blue-deep)">进行中</span></div>
+              <div class="d-foot"><span class="reward">¥ 6,800</span><span class="meta">已收 60% 节点款</span></div>
+            </div>
+            <div class="demand">
+              <div class="d-top"><span class="tag tag-green">营销推广</span><span class="d-title">河蟹电商旗舰店视觉与详情页</span><span class="badge" style="background:var(--green-soft);color:var(--green)">已验收</span></div>
+              <div class="d-foot"><span class="reward">¥ 3,200</span><span class="meta">5 星好评 · 评价已入信用</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 我的政策 -->
+        <div class="dash-panel" data-d="mypolicy" style="display:none">
+          <div class="sec-box">
+            <h3>我的政策清单（3 项可申领）</h3>
+            <div class="policy-card" style="border:1px solid var(--line)">
+              <div class="p-amt">¥3,000<small>一次性</small></div>
+              <div style="flex:1">
+                <div class="p-t">一次性创业补贴 <span class="tag tag-red" style="margin-left:6px">待提交 · 10/31 截止</span></div>
+                <div class="p-d">材料已预填 95%，补一张银行回单即可提交。</div>
+              </div>
+            </div>
+            <div class="policy-card" style="border:1px solid var(--line)">
+              <div class="p-amt">1.2 万<small>/年</small></div>
+              <div style="flex:1">
+                <div class="p-t">OPC 创业场地补贴 <span class="tag tag-green">已生效</span></div>
+                <div class="p-d">虚拟地址租金已自动抵扣，第 3 季度 ¥3,000 将于 10 月核发。</div>
+              </div>
+            </div>
+            <div class="policy-card" style="border:1px solid var(--line)">
+              <div class="p-amt">¥2,000<small>/人</small></div>
+              <div style="flex:1">
+                <div class="p-t">AI 技能培训补贴 <span class="tag tag-blue">9 月开班可报</span></div>
+                <div class="p-d">红海滩 OPC 创业课堂第 3 期，完成课时后按人补贴。</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 我的服务 -->
+        <div class="dash-panel" data-d="myservices" style="display:none">
+          <div class="sec-box">
+            <h3>我订阅的企业服务</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px">
+              <div class="card">
+                <div class="t">🧾 代理记账（顺达财务）</div>
+                <div class="d">¥99/月 · 2026.08 已出账 · 下一节点 9/15</div>
+                <div class="row"><span class="tag tag-green">正常服务中</span><span class="more" style="font-size:13px;color:var(--blue)">查看账单 →</span></div>
+              </div>
+              <div class="card">
+                <div class="t">⚖️ 法律顾问（恒信律所）</div>
+                <div class="d">¥2,000/年 · 本月已审 2 份合同 · 剩余次数 8 次</div>
+                <div class="row"><span class="tag tag-blue">年费会员</span><span class="more" style="font-size:13px;color:var(--blue)">申请审查 →</span></div>
+              </div>
+              <div class="card">
+                <div class="t">👥 社保代缴（人和人力）</div>
+                <div class="d">本人参保 ¥50/月 · 8 月已缴纳成功</div>
+                <div class="row"><span class="tag tag-green">正常</span><span class="more" style="font-size:13px;color:var(--blue)">明细 →</span></div>
+              </div>
+              <div class="card">
+                <div class="t">🏷️ 商标注册（知产通）</div>
+                <div class="d">"智创"第 42 类 · 受理中 · 预计 10 月下证</div>
+                <div class="row"><span class="tag tag-orange">审查中</span><span class="more" style="font-size:13px;color:var(--blue)">进度 →</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 原型说明 ============ -->
+<section class="view" id="view-notes" role="region" aria-label="原型说明">
+  <div class="wrap">
+    <div class="notes-hero">
+      <h1>原型说明 · 给合作方的阅读指南</h1>
+      <p>这是一份用于沟通的高保真原型（非真实系统）。目的：让第一次看到这个平台的人，通过"看"就能理解它解决什么问题、怎么运转。以下请先阅读。</p>
+    </div>
+
+    <div class="warn">
+      <span>⚠️</span>
+      <span><b>重要：</b>页面中的机构名称、服务商、价格、数据均为<b>演示占位内容</b>，用于营造真实感，不代表真实承诺。与政府或合作方沟通时，请明确说明"数据为示意"。</span>
+    </div>
+
+    <div class="notes-grid">
+      <div class="note-card">
+        <h4>🖥 页面地图</h4>
+        <ul>
+          <li><i>→</i> 首页：平台定位 + 双轮入口 + 服务类目 + 成果数据</li>
+          <li><i>→</i> 开办服务：注册全流程，4 步向导演示</li>
+          <li><i>→</i> 运营服务：代账/法务/人力等，仿猪八戒热销榜</li>
+          <li><i>→</i> 政策速配：3 个问题自动匹配补贴</li>
+          <li><i>→</i> 需求大厅 / 需求详情：威客交易闭环</li>
+          <li><i>→</i> 我的工作台：OPC 创业者的一站式视角</li>
+        </ul>
+      </div>
+      <div class="note-card">
+        <h4>🗣 演示建议话术</h4>
+        <ul>
+          <li><i>①</i> 首页先讲一句话："一个人开公司、接单、赚钱，一个平台全包"</li>
+          <li><i>②</i> 开办服务演示 4 步，"注册 0 元 + 补贴自动申报"是亮点</li>
+          <li><i>③</i> 政策速配点"立即匹配"，展示"政策找人"</li>
+          <li><i>④</i> 需求大厅→详情，讲"赏金托管"保障机制</li>
+        </ul>
+      </div>
+      <div class="note-card">
+        <h4>🧩 核心设计逻辑</h4>
+        <ul>
+          <li><i>→</i> 双轮驱动：服务台解决"活下去"，业务场解决"赚到钱"</li>
+          <li><i>→</i> 政府背书条：全站常驻，强调联盟属性</li>
+          <li><i>→</i> 信用体系：接单记录沉淀信用，反哺贷款/政策</li>
+          <li><i>→</i> 一人公司视角：工作台按"创业者"而非"平台"组织</li>
+        </ul>
+      </div>
+      <div class="note-card">
+        <h4>🖱 可交互点</h4>
+        <ul>
+          <li><i>→</i> 顶部导航切换所有页面</li>
+          <li><i>→</i> 开办服务：点击 4 个步骤切换流程</li>
+          <li><i>→</i> 政策速配：点选项后点"立即匹配"</li>
+          <li><i>→</i> 运营服务：类目 Tab 筛选服务商</li>
+          <li><i>→</i> 需求大厅：分类筛选需求</li>
+          <li><i>→</i> 工作台：左侧菜单切换 5 个面板</li>
+        </ul>
+      </div>
+      <div class="note-card">
+        <h4>🎨 视觉规范</h4>
+        <ul>
+          <li><i>→</i> 主色：政务蓝，传递官方与信任</li>
+          <li><i>→</i> 顶部红条：人社局背书，强化政府属性</li>
+          <li><i>→</i> 橙色：行动按钮（发布需求/接单）</li>
+          <li><i>→</i> 绿色：政策补贴、交易保障等利好信息</li>
+        </ul>
+      </div>
+      <div class="note-card">
+        <h4>📌 待决策事项（演示后讨论）</h4>
+        <ul>
+          <li><i>□</i> 平台运营主体与共建协议</li>
+          <li><i>□</i> 首批补贴政策数据接入</li>
+          <li><i>□</i> 种子服务商招募名单</li>
+          <li><i>□</i> 交易佣金费率（原型为 5%/3%）</li>
+          <li><i>□</i> 移动端（小程序）范围与排期</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="brand" style="margin-bottom:12px"><span class="logo">OPC</span><span>OPC 创业联盟<small>一人公司一体化服务平台</small></span></div>
+        <p style="font-size:13px;color:var(--ink-2);max-width:320px">盘锦市人力资源和社会保障局 OPC 创业联盟指定服务平台（原型示意）。从开办到运营，从接单到赚钱，一个人 + AI 撑起一家公司。</p>
+      </div>
+      <div>
+        <h5>服务台</h5>
+        <a href="javascript:void(0)" onclick="go('startup')">开办服务</a>
+        <a href="javascript:void(0)" onclick="go('service')">运营服务</a>
+        <a href="javascript:void(0)" onclick="go('policy')">政策速配</a>
+      </div>
+      <div>
+        <h5>业务场</h5>
+        <a href="javascript:void(0)" onclick="go('market')">需求大厅</a>
+        <a href="javascript:void(0)" onclick="go('detail')">交易保障</a>
+        <a href="javascript:void(0)" onclick="go('dashboard')">我的工作台</a>
+      </div>
+      <div>
+        <h5>联盟</h5>
+        <a href="javascript:void(0)" onclick="go('notes')">原型说明</a>
+        <a href="javascript:void(0)">红海滩创业课堂</a>
+        <a href="javascript:void(0)">联盟公告</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 盘锦 OPC 创业联盟 · 高保真原型（演示用，数据为示意）</span>
+      <span>由 千羽网络 设计 · 前端设计规范 Frontend Design Pro</span>
+    </div>
+  </div>
+</footer>
+
+<!-- 发布需求弹窗 -->
+<div id="publishModal" style="display:none;position:fixed;inset:0;background:oklch(0.2 0.02 255/0.5);z-index:200;align-items:center;justify-content:center;padding:24px" onclick="if(event.target===this)closePublish()">
+  <div style="background:var(--surface);border-radius:20px;max-width:520px;width:100%;padding:32px" onclick="event.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h3 style="font-size:19px;font-weight:500">发布需求</h3>
+      <button style="font-size:20px;color:var(--ink-3)" onclick="closePublish()">×</button>
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label>需求标题</label>
+      <input type="text" placeholder="一句话说清你要什么">
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label>需求描述</label>
+      <textarea rows="4" style="width:100%;padding:11px 14px;border:1px solid var(--line-2);border-radius:10px;font-size:14px;font-family:inherit;resize:vertical" placeholder="背景、要求、工期、预算说明…"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+      <div class="field">
+        <label>赏金（元）</label>
+        <input type="number" placeholder="托管到平台">
+      </div>
+      <div class="field">
+        <label>需求类目</label>
+        <select><option>网站开发</option><option>设计美工</option><option>文案写作</option><option>视频制作</option><option>营销推广</option></select>
+      </div>
+    </div>
+    <div style="background:var(--green-soft);border:1px solid oklch(0.85 0.06 150);border-radius:12px;padding:14px 16px;font-size:13px;color:oklch(0.4 0.1 150);margin-bottom:20px">
+      💡 赏金由平台托管，验收通过才放款——发布方不怕被坑，接单方不怕跑单。
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="closePublish();go('market');alert('原型演示：需求已发布并进入审核，预计 1 小时内上线大厅')">确认发布</button>
+  </div>
+</div>
+
+<script>
+function go(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  var t=document.getElementById('view-'+v);
+  if(t)t.classList.add('active');
+  document.querySelectorAll('#mainMenu button').forEach(b=>{
+    b.classList.toggle('active',b.dataset.v===v);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function stepGo(n){
+  document.querySelectorAll('#startupSteps .step').forEach((s,i)=>{
+    s.classList.toggle('active',i===n-1);
+    s.classList.toggle('done',i<n-1);
+  });
+  document.querySelectorAll('#view-startup .panel').forEach(p=>{
+    p.classList.toggle('active',parseInt(p.dataset.p)===n);
+  });
+}
+function svcTab(c,btn){
+  document.querySelectorAll('#svcTabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#svcGrid .svc-card').forEach(card=>{
+    card.style.display=(c==='all'||card.dataset.c===c)?'':'none';
+  });
+}
+function mktFilter(c,btn){
+  document.querySelectorAll('#mktFilters button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#demandList .demand').forEach(d=>{
+    d.style.display=(c==='all'||d.dataset.c===c)?'':'none';
+  });
+}
+function pick(el){
+  el.classList.toggle('on');
+}
+function runMatch(){
+  document.getElementById('policyEmpty').style.display='none';
+  document.getElementById('policyResults').style.display='block';
+  document.getElementById('policyResults').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function dashTab(d,btn){
+  document.querySelectorAll('#dashMenu button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.dash-panel').forEach(p=>{
+    p.style.display=(p.dataset.d===d)?'':'none';
+  });
+}
+function publishModal(){
+  document.getElementById('publishModal').style.display='flex';
+}
+function closePublish(){
+  document.getElementById('publishModal').style.display='none';
+}
+</script>
+</body>
+</html>
